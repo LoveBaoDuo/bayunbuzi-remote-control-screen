@@ -13,11 +13,14 @@ asarUnpack:
   - resources/**
 win:
   executableName: bayunbuzi-remote-control-screen
+  icon: build/favicon.ico
 nsis:
   artifactName: ${name}-${version}-setup.${ext}
   shortcutName: ${productName}
   uninstallDisplayName: ${productName}
   createDesktopShortcut: always
+  installerIcon: ./build/favicon.ico
+  uninstallerIcon: ./build/favicon.ico
 mac:
   entitlementsInherit: build/entitlements.mac.plist
   extendInfo:
