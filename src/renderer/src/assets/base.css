@@ -15,12 +15,20 @@
   --ev-c-text-2: rgba(235, 235, 245, 0.6);
   --ev-c-text-3: rgba(235, 235, 245, 0.38);
 
+  --ev-border-radius-1: 5px;
+  --ev-border-radius-2: 10px;
+  --ev-border-radius-3: 15px;
+  --ev-border-radius-4: 20px;
+
   --ev-button-alt-border: transparent;
   --ev-button-alt-text: var(--ev-c-text-1);
   --ev-button-alt-bg: var(--ev-c-gray-3);
   --ev-button-alt-hover-border: transparent;
   --ev-button-alt-hover-text: var(--ev-c-text-1);
   --ev-button-alt-hover-bg: var(--ev-c-gray-2);
+  --bg-color: #232946;
+  --bg-title: #fffffe;
+  --bg-text: #b8c1ec;
 }
 
 :root {
@@ -47,6 +55,8 @@ body {
   min-height: 100vh;
   color: var(--color-text);
   line-height: 1.6;
+  -webkit-app-region: drag;
+  /*border-radius: var(--ev-border-radius-1);*/
   font-family:
     Inter,
     -apple-system,
@@ -63,4 +73,15 @@ body {
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+/* 定义 transition 的样式 */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.1s;
+}
+
+.fade-enter,
+.fade-leave-to {
+  /* 进入时的初始状态 & 离开时的最终状态 */
+  opacity: 0;
 }
