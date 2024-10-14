@@ -1,7 +1,8 @@
 import { contextBridge } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
-import { uuidv5 } from 'uuid'
+import { v5 as uuidv5 } from 'uuid';
 import { CustomWindowOptions } from '../main/utils'
+
 // Custom APIs for renderer
 const api = {
   close: () => electronAPI.ipcRenderer.send('close'),
@@ -9,9 +10,15 @@ const api = {
     electronAPI.ipcRenderer.send('ToggleFullScreen', isFullScreen),
   minimize: () => electronAPI.ipcRenderer.send('minimize'),
   uniqueId: async () => {
-    const NAMESPACE_DNS = 'U7ZE$nVm'
+// 定义命名空间，UUID v5 需要一个命名空间
+    const MY_NAMESPACE = uuidv5('https://example.com', uuidv5.DNS);
     const path = await electronAPI.ipcRenderer.invoke('appPath')
-    return uuidv5(path, NAMESPACE_DNS)
+    try {
+      return uuidv5(path, MY_NAMESPACE )
+    } catch (error) {
+      console.log(error)
+    }
+
   },
   set: (key, value) => {
     electronAPI.ipcRenderer.send('set', key, value)
@@ -20,6 +27,7 @@ const api = {
     return electronAPI.ipcRenderer.invoke('get', key)
   },
   createWindow: async (config: CustomWindowOptions) => {
+    console.log(config)
     return electronAPI.ipcRenderer.invoke('open-custom-window', config)
   }
 }

@@ -10,7 +10,9 @@ export default defineConfig({
     plugins: [externalizeDepsPlugin()]
   },
   preload: {
-    plugins: [externalizeDepsPlugin()]
+    build:{
+    },
+    plugins: [externalizeDepsPlugin()],
   },
   renderer: {
     resolve: {

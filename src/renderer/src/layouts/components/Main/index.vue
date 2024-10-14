@@ -24,7 +24,7 @@ const afterLeave = (el) => {
     <nav class="h-10">
       <Nav />
     </nav>
-    <section class="h-5/6">
+    <section class="h-5/6" style="-webkit-app-region: no-drag;">
       <router-view v-slot="{ Component }">
         <!-- 过渡效果 -->
         <transition

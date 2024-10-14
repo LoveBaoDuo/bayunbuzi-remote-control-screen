@@ -4,14 +4,14 @@ import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import Store from 'electron-store'
 import { globalShortcut } from 'electron'
-import { createCustomWindow, CustomWindowOptions} from './utils'
+import {createCustomWindow, CustomWindowOptions} from "./utils";
+// import { createCustomWindow, CustomWindowOptions} from './utils'
 
 const store = new Store()
-let mainWindow
 
 function createWindow(): void {
   // Create the browser window.
-  mainWindow = new BrowserWindow({
+ const mainWindow = new BrowserWindow({
     width: 900,
     height: 670,
     show: false,
@@ -20,7 +20,7 @@ function createWindow(): void {
     backgroundColor: '#00000000',
     icon,
     webPreferences: {
-      preload: join(__dirname, '../preload/index.js'),
+      preload: join(__dirname, '../preload/index.mjs'),
       sandbox: false
     }
   })
@@ -110,6 +110,7 @@ app.whenReady().then(() => {
     //   parent: mainWindow, // 设为主窗口的子窗口
     //   modal: true // 模态窗口
     // }
+    // config.parent =
     return  createCustomWindow(config)
   })
   registryShortcut()
