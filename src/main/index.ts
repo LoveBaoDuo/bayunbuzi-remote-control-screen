@@ -4,16 +4,44 @@ import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import Store from 'electron-store'
 import { globalShortcut } from 'electron'
-import {createCustomWindow, CustomWindowOptions} from "./utils";
-// import { createCustomWindow, CustomWindowOptions} from './utils'
+import { createCustomWindow } from './utils'
+import { IpcListener } from '@electron-toolkit/typed-ipc/main'
 
+const ipc = new IpcListener()
+
+// const emitter = new IpcEmitter()
 const store = new Store()
-
+let mainWindow
+const wins = new Map()
+ipc.handle('open-custom-window', async (_, arg) => {
+ const win =  await createCustomWindow(JSON.parse(arg), mainWindow)
+  wins.set(win.id, win)
+ return  win.id
+})
+ipc.on('close', (event, id: string) => {
+  if(id) {
+    const win = wins.get(id)
+    if(win) {
+      win.hide()
+      win.close()
+    }
+    return
+  }
+    // // 处理关闭事件
+    // customWindow.show()
+    // customWindow.close()
+    const webContents = event.sender // 获取 WebContents 对象
+    const window = BrowserWindow.fromWebContents(webContents) // 从 WebContents 获取 BrowserWindow 实例
+    if (window) {
+      window.hide()
+      window.close()
+    }
+  })
 function createWindow(): void {
   // Create the browser window.
- const mainWindow = new BrowserWindow({
-    width: 900,
-    height: 670,
+  mainWindow = new BrowserWindow({
+    width: 1024,
+    height: 480,
     show: false,
     frame: false, // 设置无边框
     transparent: true, // 设置窗口透明
@@ -92,27 +120,13 @@ app.whenReady().then(() => {
   ipcMain.handle('appPath', () => {
     return app.getAppPath()
   })
-  // 退出应用
-  ipcMain.on('close', () => {
-    app.quit()
-  })
   // IPC test
   ipcMain.on('ping', () => console.log('pong'))
-
+  // // 创建自定义窗口
+  // ipcMain.handle('open-custom-window', (_, config: string) => {
+  //   return createCustomWindow(JSON.parse(config), mainWindow)
+  // })
   createWindow()
-  // 创建自定义窗口
-  ipcMain.handle('open-custom-window', (_, config: CustomWindowOptions) => {
-    // {
-    //   url,
-    //     width: 600,
-    //   height: 400,
-    //   title: 'Custom Popup',
-    //   parent: mainWindow, // 设为主窗口的子窗口
-    //   modal: true // 模态窗口
-    // }
-    // config.parent =
-    return  createCustomWindow(config)
-  })
   registryShortcut()
   app.on('activate', function () {
     // On macOS it's common to re-create a window in the app when the

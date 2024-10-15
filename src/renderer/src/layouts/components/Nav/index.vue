@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import Icon from '@renderer/components/Icon.vue'
 import { ref } from 'vue'
-const { api } = window
+import {  IpcEmitter } from '@electron-toolkit/typed-ipc/renderer'
+const emitter = new IpcEmitter()
+const { api } = window as any
 const isFullScreen = ref(false)
 const handleCloseApp = () => {
-  api.close()
+  emitter.send('close')
 }
 const handleToggleFullScreen = () => {
   isFullScreen.value = !isFullScreen.value

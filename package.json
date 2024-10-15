@@ -22,7 +22,8 @@
     "build:linux": "npm run build && electron-builder --linux"
   },
   "dependencies": {
-    "@electron-toolkit/preload": "^3.0.0",
+    "@electron-toolkit/preload": "^3.0.1",
+    "@electron-toolkit/typed-ipc": "^1.0.1",
     "@electron-toolkit/utils": "^3.0.0",
     "electron-store": "^10.0.0",
     "electron-updater": "^6.1.7",

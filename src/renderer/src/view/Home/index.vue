@@ -11,9 +11,9 @@ getUUID()
 </script>
 
 <template>
-<div>
-  <div class="text-white" @click="openWind">{{ uniqueId }}</div>
-</div>
+  <div>
+    <div class="text-white" @click="openWind">{{ uniqueId }}</div>
+  </div>
 </template>
 
 <style scoped></style>

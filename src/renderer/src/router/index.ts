@@ -9,7 +9,7 @@ export const currentRoutes: RouteRecordRaw[] = [
   {
     path: '/',
     component: () => import('@renderer/layouts/index.vue'),
-    redirect: 'home',
+    redirect: '/loading',
     children: [
       {
         path: 'home',
@@ -32,7 +32,12 @@ export const currentRoutes: RouteRecordRaw[] = [
         }
       },
     ]
-  }
+  },
+  {
+    path: '/loading',
+    component: () => import('@renderer/view/Loading/index.vue'),
+    name: 'Loading'
+  },
 ]
 
 // 导出 router
