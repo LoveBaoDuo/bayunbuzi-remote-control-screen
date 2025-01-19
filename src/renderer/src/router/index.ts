@@ -38,6 +38,11 @@ export const currentRoutes: RouteRecordRaw[] = [
     component: () => import('@renderer/view/Loading/index.vue'),
     name: 'Loading'
   },
+  {
+    path: '/login',
+    component: () => import('@renderer/view/Login/index.vue'),
+    name: 'Login'
+  },
 ]
 
 // 导出 router

@@ -2,7 +2,7 @@ import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
-import Store from 'electron-store'
+import ElectronStore from 'electron-store'
 import { globalShortcut } from 'electron'
 import { createCustomWindow } from './utils'
 import { IpcListener } from '@electron-toolkit/typed-ipc/main'
@@ -10,33 +10,44 @@ import { IpcListener } from '@electron-toolkit/typed-ipc/main'
 const ipc = new IpcListener()
 
 // const emitter = new IpcEmitter()
-const store = new Store()
+const store = new ElectronStore()
 let mainWindow
 const wins = new Map()
 ipc.handle('open-custom-window', async (_, arg) => {
- const win =  await createCustomWindow(JSON.parse(arg), mainWindow)
+  const win = await createCustomWindow(JSON.parse(arg), mainWindow)
   wins.set(win.id, win)
- return  win.id
+  return win.id
 })
 ipc.on('close', (event, id: string) => {
-  if(id) {
+  if (id) {
     const win = wins.get(id)
-    if(win) {
+    if (win) {
       win.hide()
       win.close()
     }
     return
   }
-    // // 处理关闭事件
-    // customWindow.show()
-    // customWindow.close()
-    const webContents = event.sender // 获取 WebContents 对象
-    const window = BrowserWindow.fromWebContents(webContents) // 从 WebContents 获取 BrowserWindow 实例
-    if (window) {
-      window.hide()
-      window.close()
-    }
-  })
+  // // 处理关闭事件
+  // customWindow.show()
+  // customWindow.close()
+  const webContents = event.sender // 获取 WebContents 对象
+  const window = BrowserWindow.fromWebContents(webContents) // 从 WebContents 获取 BrowserWindow 实例
+  if (window) {
+    window.hide()
+    window.close()
+  }
+})
+// 保存数据
+ipc.on('store_set', (_, key, data) => {
+  // @ts-ignore
+  store.set(key, data)
+})
+// 获取应用数据
+ipc.handle('store_get', (_, key) => {
+  // @ts-ignore
+  return store.get(key)
+})
+
 function createWindow(): void {
   // Create the browser window.
   mainWindow = new BrowserWindow({
@@ -107,14 +118,6 @@ app.whenReady().then(() => {
     if (window) {
       window.minimize()
     }
-  })
-  // 保存数据
-  ipcMain.on('set', (_, key, data) => {
-    store.set(key, data)
-  })
-  // 获取应用数据
-  ipcMain.handle('get', (_, key) => {
-    return store.get(key)
   })
   // 获取应用路径
   ipcMain.handle('appPath', () => {

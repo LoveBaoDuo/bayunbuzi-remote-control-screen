@@ -10,6 +10,7 @@ const openWind =async () => {
     backgroundColor: '#00000000',
     url: 'http://localhost:5173/setting'
   })
+  // @ts-ignore
   window.api.createWindow(config)
 }
 </script>

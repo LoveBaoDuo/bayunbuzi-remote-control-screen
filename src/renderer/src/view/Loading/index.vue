@@ -5,17 +5,18 @@ const emitter = new IpcEmitter()
 setTimeout(async () => {
   const config = JSON.stringify({
     parent: false,
-    url: 'http://localhost:5173/home',
+    url: 'http://localhost:5173/login',
     win: {
-      width: 960,
-      height: 620,
-      show: false,
+      width: 1024,
+      height: 480,
+      resizable: false, // 禁止手动调整宽高
+      show: false, // 是否在创建时立即显示
       frame: false, // 设置无边框
       transparent: true, // 设置窗口透明
-      backgroundColor: '#00000000',
+      backgroundColor: '#00000000'
     }
   })
-  const result = await emitter.invoke('open-custom-window', config)
+  await emitter.invoke('open-custom-window', config)
   emitter.send('close')
   //   await window.api.createWindow(config)
 }, 1 * 1000)
