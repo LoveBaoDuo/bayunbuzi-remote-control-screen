@@ -3,11 +3,14 @@ import { IpcEmitter, IpcListener } from '@electron-toolkit/typed-ipc/renderer'
 import { otherWindowsConfig } from '../../config/windows.config'
 import { navigationToWin } from '../../utils'
 import { useUserStore } from '../../store/user.store'
+import { onMounted } from 'vue'
 // // 创建 IpcSender 实例
 const ipcRenderer = new IpcListener()
 //
 const emitter = new IpcEmitter()
 const userUser = useUserStore()
+let isDownlad = false
+
 const init = async () => {
   const access_token = await emitter.invoke('store_get', 'access_token')
   if (!access_token) {
@@ -24,27 +27,24 @@ const init = async () => {
 const toLogin = async () => {
   const config = JSON.stringify({
     parent: false,
-    url: 'http://localhost:5173/login',
+    url: '/login',
     win: otherWindowsConfig
   })
   await emitter.invoke('open-custom-window', config)
   emitter.send('close')
 }
-init()
-// 检查更新
-ipcRenderer.on('update_available', () => {
-  // 提示用户有更新可用
-  alert('A new update is available. Downloading now...')
+onMounted(() => {
+  emitter.send('CheckForUpdates')
+  if (isDownlad) return
+  init()
 })
-ipcRenderer.on('update_downloaded', () => {
-  // ipcRenderer.removeAllListeners('update_downloaded')
-  // 提示用户重启应用以应用更新
-  const isConfirmed = confirm('Update downloaded. Restart now to apply the update?')
-  console.log(222)
-  if (isConfirmed) {
-    console.log(222)
-    emitter.send('restart_app')
-  }
+
+// 检查更新
+ipcRenderer.on('startDownload', () => {
+  isDownlad = true
+})
+ipcRenderer.on('notDownload', () => {
+  init()
 })
 </script>
 

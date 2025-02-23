@@ -73,7 +73,7 @@ export function generateUUID() {
 export async function navigationToWin(uri: string) {
   const config = JSON.stringify({
     parent: false,
-    url: 'http://localhost:5173' + uri,
+    url: '' + uri,
     win: minWindowsConfig
   })
   await emitter.invoke('open-custom-window', config)
@@ -83,7 +83,7 @@ export async function navigationToWin(uri: string) {
 export const toLogin = async () => {
   const config = JSON.stringify({
     parent: false,
-    url: 'http://localhost:5173/login',
+    url: '/login',
     win: otherWindowsConfig
   })
   await emitter.invoke('open-custom-window', config)

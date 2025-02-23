@@ -1,7 +1,8 @@
 // main/utils.ts
 import { BrowserWindow } from 'electron'
-import path from 'path'
+import path, { join } from 'path'
 import icon from '../../resources/icon.png?asset'
+import { is } from '@electron-toolkit/utils'
 
 interface WinType {
   width?: number
@@ -47,7 +48,12 @@ export const createCustomWindow = async (
   customWindow.once('ready-to-show', () => {
     customWindow.show()
   })
-  await customWindow.loadURL(options.url) // 加载指定的 URL
+  if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
+    await customWindow.loadURL(process.env['ELECTRON_RENDERER_URL'] + '/#' + options.url)
+  } else {
+    await customWindow.loadFile(join(__dirname, '../renderer/index.html'), {
+      hash: options.url
+    })
+  }
   return customWindow
 }
-

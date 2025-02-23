@@ -8,7 +8,7 @@ const openWind =async () => {
     frame: false, // 设置无边框
     transparent: true, // 设置窗口透明
     backgroundColor: '#00000000',
-    url: 'http://localhost:5173/setting'
+    url: '/setting'
   })
   // @ts-ignore
   window.api.createWindow(config)

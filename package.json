@@ -1,6 +1,6 @@
 {
   "name": "bayunbuzi-remote-control-screen",
-  "version": "1.0.0",
+  "version": "1.0.3",
   "description": "An Electron application with Vue and TypeScript",
   "main": "./out/main/index.js",
   "author": "example.com",
@@ -13,11 +13,11 @@
     "typecheck:web": "vue-tsc --noEmit -p tsconfig.web.json --composite false",
     "typecheck": "npm run typecheck:node && npm run typecheck:web",
     "start": "electron-vite preview",
-    "dev": "electron-vite dev",
+    "dev": "cross-env NODE_ENV=dev electron-vite dev",
     "build": "npm run typecheck && electron-vite build",
     "postinstall": "electron-builder install-app-deps",
     "build:unpack": "npm run build && electron-builder --dir",
-    "build:win": "npm run build && electron-builder --win",
+    "build:win": "cross-env NODE_ENV=port  npm run build && electron-builder --win --config --publish always",
     "build:mac": "npm run build && electron-builder --mac",
     "build:linux": "npm run build && electron-builder --linux"
   },
@@ -28,6 +28,7 @@
     "@vue/runtime-core": "^3.5.13",
     "async-validator": "^4.2.5",
     "axios": "^1.7.9",
+    "cross-env": "^7.0.3",
     "crypto-js": "^4.2.0",
     "electron-store": "^10.0.0",
     "electron-updater": "^6.1.7",
@@ -68,15 +69,5 @@
     "vue": "^3.5.13",
     "vue-router": "^4.4.3",
     "vue-tsc": "^2.0.22"
-  },
-  "build": {
-    "appId": "com.bayunbuzi.bayunbuzi-remote-control-screen",
-    "productName": "bayunbuzi-remote-control-screen",
-    "publish": {
-      "provider": "github",
-      "owner": "LoveBaoDuo",
-      "repo": "bayunbuzi-remote-control-screen"
-    }
   }
-
 }

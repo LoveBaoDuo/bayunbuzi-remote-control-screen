@@ -1,4 +1,4 @@
-appId: com.electron.app
+appId: com.bayunbuzi.bayunbuzi-remote-control-screen
 productName: bayunbuzi-remote-control-screen
 directories:
   buildResources: build
@@ -42,7 +42,9 @@ appImage:
   artifactName: ${name}-${version}.${ext}
 npmRebuild: false
 publish:
-  provider: generic
-  url: https://example.com/auto-updates
+  provider: github
+  owner: LoveBaoDuo
+  repo: bayunbuzi-remote-control-screen
+  releaseType: 'release'
 electronDownload:
   mirror: https://npmmirror.com/mirrors/electron/

@@ -5,14 +5,9 @@ import icon from '../../resources/icon.png?asset'
 import { globalShortcut } from 'electron'
 import { createCustomWindow } from './utils'
 import { ipc } from './ipc'
-import { IpcEmitter } from '@electron-toolkit/typed-ipc/main'
-import electronUpdater from 'electron-updater'
-const { autoUpdater } = electronUpdater
-// import { IpcEmitter } from '@electron-toolkit/typed-ipc/main';
-// 创建 IpcSender 实例
-const ipcSender = new IpcEmitter()
+import { updater } from './updater'
 
-let mainWindow
+export let mainWindow
 const wins = new Map()
 ipc.handle('open-custom-window', async (_, arg) => {
   const win = await createCustomWindow(JSON.parse(arg), mainWindow)
@@ -34,9 +29,6 @@ ipc.on('close', (event, id: string) => {
     window.hide()
     window.close()
   }
-})
-ipc.on('restart_app', () => {
-  autoUpdater.quitAndInstall()
 })
 
 function createWindow(): void {
@@ -70,7 +62,7 @@ function createWindow(): void {
   } else {
     mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
   }
-  checkUpdate()
+  updater()
 }
 
 // 快捷键注册
@@ -141,20 +133,3 @@ app.on('window-all-closed', () => {
 app.on('will-quit', () => {
   globalShortcut.unregisterAll()
 })
-// In this file you can include the rest of your app"s specific main process
-// code. You can also put them in separate files and require them here.
-// 检查更新
-export const checkUpdate = () => {
-  console.log(mainWindow)
-  const win = BrowserWindow.getAllWindows()[0]
-  // 检查更新
-  autoUpdater.checkForUpdatesAndNotify()
-  // 自动更新相关事件
-  autoUpdater.on('update-available', () => {
-    ipcSender.send(win.webContents, 'update_available')
-  })
-
-  autoUpdater.on('update-downloaded', () => {
-    ipcSender.send(win.webContents, 'update_downloaded')
-  })
-}

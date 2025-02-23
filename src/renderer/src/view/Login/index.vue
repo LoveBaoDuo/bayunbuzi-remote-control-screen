@@ -5,7 +5,10 @@ import HandleInter from './components/HandleInter.vue'
 import Register from './components/Register.vue'
 import mittBus from '/@/utils/mitt'
 import gsap from 'gsap'
+// import Layouts from '@renderer/layouts/index.vue'
+import {IpcListener} from "@electron-toolkit/typed-ipc/renderer";
 
+const ipcRenderer = new IpcListener()
 const handleOnLoginAndRegisterSwitch = (val: string) => {
   if (val === 'login') {
     gsap.to('.handle-inter', { left: '0.5rem', duration: 0.5, overwrite: 'auto' })
@@ -13,6 +16,13 @@ const handleOnLoginAndRegisterSwitch = (val: string) => {
     gsap.to('.handle-inter', { left: 'calc(50% - 0.5rem)', duration: 0.5, overwrite: 'auto' })
   }
 }
+
+ipcRenderer.on('downloadProgress', (_,{ percent, speed }) => {
+  console.log(percent, speed)
+})
+ipcRenderer.on('loadingsss', () => {
+  console.log(222)
+})
 onMounted(() => {
   mittBus.on('onLoginAndRegisterSwitch', handleOnLoginAndRegisterSwitch)
 })

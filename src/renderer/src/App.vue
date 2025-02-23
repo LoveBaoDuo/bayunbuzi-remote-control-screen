@@ -1,12 +1,15 @@
 <script setup lang="ts">
-// import Layouts from '@renderer/layouts/index.vue'
+import { IpcListener } from '@electron-toolkit/typed-ipc/renderer'
+
+const ipc = new IpcListener()
+ipc.on('download-progress', (_, data) => {
+  console.log(data)
+})
 </script>
 
 <template>
-  <div
-    class="w-full h-full rounded-md shadow-2xl bg-white overflow-hidden"
-  >
+  <div class="w-full h-full rounded-md shadow-2xl bg-white overflow-hidden">
     <router-view />
-<!--    <Layouts />-->
+    <!--    <Layouts />-->
   </div>
 </template>
