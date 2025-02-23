@@ -5,8 +5,8 @@ on:
   push:
     branches:
       - master
-    tags:
-      - v*  # 当推送以v开头的标签时触发此工作流
+#    tags:
+#      - v*  # 当推送以v开头的标签时触发此工作流
 
 jobs:
   release:
