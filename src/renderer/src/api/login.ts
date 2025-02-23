@@ -1,6 +1,7 @@
 import request from '@renderer/utils/request'
 import { encryption } from '@renderer/utils'
 import { IpcEmitter } from '@electron-toolkit/typed-ipc/renderer'
+
 const emitter = new IpcEmitter()
 // 登录
 /**
@@ -32,3 +33,36 @@ export const login = (data: any) => {
     }
   })
 }
+export const refreshTokenApi = async (refresh_token: string) => {
+  const grant_type = 'refresh_token'
+  const scope = 'server'
+
+  // 获取当前选中的 basic 认证信息
+  const basicAuth = await emitter.invoke('store_get')
+
+  return request({
+    url: '/auth/oauth2/token',
+    headers: {
+      skipToken: true,
+      Authorization: basicAuth,
+      'Content-Type': FORM_CONTENT_TYPE
+    },
+    method: 'post',
+    data: { refresh_token, grant_type, scope }
+  })
+}
+/**
+ * 获取用户信息
+ */
+export const getUserInfo = () => {
+  return request({
+    url: '/admin/user/info',
+    method: 'get',
+  });
+};
+export const logout = () => {
+  return request({
+    url: '/auth/token/logout',
+    method: 'delete',
+  });
+};

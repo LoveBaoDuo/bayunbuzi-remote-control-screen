@@ -40,6 +40,30 @@ export default defineConfig({
         symbolId: 'icon-[name]'
       })
     ],
+    server: {
+      host: '0.0.0.0', // 服务器地址
+      port: 5173, // 服务器端口号
+      hmr: true, // 启用热更新
+      proxy: {
+        '/api/gen': {
+          //单体架构下特殊处理代码生成模块代理
+          target: 'http://159.75.188.129:9999',
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/api/, ''),
+        },
+        '/api': {
+          target: 'http://159.75.188.129:9999', // 目标服务器地址
+          ws: true, // 是否启用 WebSocket
+          changeOrigin: true, // 是否修改请求头中的 Origin 字段
+          rewrite: (path) => path.replace(/^\/api/, ''),
+        },
+        '^/ws/info/.*': {
+          target: 'http://159.75.188.129:9999', // 目标服务器地址
+          ws: true, // 是否启用 WebSocket
+          changeOrigin: true,
+        },
+      },
+    },
     css: {
       postcss: {
         plugins: [tailwindcss, autoprefixer]

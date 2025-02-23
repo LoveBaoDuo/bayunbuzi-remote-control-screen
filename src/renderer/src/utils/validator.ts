@@ -1,9 +1,6 @@
 import Schema, { Rules } from 'async-validator'
 
-export async function commentCheck<Values>(
-  data: any,
-  rule: Rules
-): Promise<{ errors: any; fields: any }> {
+export async function commentCheck(data: any, rule: Rules): Promise<{ errors: any; fields: any }> {
   const validator = new Schema(rule)
   return validator
     .validate(data)
@@ -28,9 +25,9 @@ const descriptor: any = {
       type: 'string',
       required: true,
       // 用户名只能是数字和字母
-      validator: (rule: any, value: string) => {
+      validator: (_, value: string) => {
         const flag = new RegExp(/\S+/, 'g').test(value)
-        const errors = []
+        const errors: string[] = []
         if (!flag) {
           errors.push('用户名不能为空')
         }
@@ -38,9 +35,9 @@ const descriptor: any = {
       }
     },
     {
-      validator: (rule: any, value: string) => {
+      validator: (_, value: string) => {
         const flag = new RegExp(/^[a-zA-Z0-9]+$/, 'g').test(value)
-        const errors = []
+        const errors: string[] = []
         if (!flag) {
           errors.push('用户名只能是数字和字母')
         }
@@ -48,12 +45,12 @@ const descriptor: any = {
       }
     }
   ],
-  pwd: {
+  password: {
     type: 'string',
     required: true,
-    validator: (rule: any, value: string) => {
+    validator: (_, value: string) => {
       const flag = new RegExp(/\S+/, 'g').test(value)
-      const errors = []
+      const errors: string[] = []
       if (!flag) {
         errors.push('密码不能为空')
       }
@@ -63,9 +60,9 @@ const descriptor: any = {
   again: {
     type: 'string',
     required: true,
-    validator: (rule: any, value: string) => {
+    validator: (_, value: string) => {
       const flag = new RegExp(/\S+/, 'g').test(value)
-      const errors = []
+      const errors: string[] = []
       if (!flag) {
         errors.push('再次输入不能为空')
       }
@@ -75,13 +72,25 @@ const descriptor: any = {
   email: {
     type: 'email',
     required: true,
-    validator: (rule: any, value: string) => {
+    validator: (_, value: string) => {
       const flag = new RegExp(/^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/, 'g').test(value)
       console.log(flag)
 
-      const errors = []
+      const errors: string[] = []
       if (!flag) {
         errors.push('邮箱不能为空且必须是有效邮箱 ')
+      }
+      return errors
+    }
+  },
+  code: {
+    type: 'string',
+    required: true,
+    validator: (_, value: string) => {
+      const flag = new RegExp(/\S+/, 'g').test(value)
+      const errors: string[] = []
+      if (!flag) {
+        errors.push('验证码不能为空')
       }
       return errors
     }

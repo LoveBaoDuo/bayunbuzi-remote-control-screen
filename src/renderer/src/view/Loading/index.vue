@@ -1,25 +1,51 @@
 <script setup lang="ts">
-import { IpcEmitter } from '@electron-toolkit/typed-ipc/renderer'
-
+import { IpcEmitter, IpcListener } from '@electron-toolkit/typed-ipc/renderer'
+import { otherWindowsConfig } from '../../config/windows.config'
+import { navigationToWin } from '../../utils'
+import { useUserStore } from '../../store/user.store'
+// // 创建 IpcSender 实例
+const ipcRenderer = new IpcListener()
+//
 const emitter = new IpcEmitter()
-setTimeout(async () => {
+const userUser = useUserStore()
+const init = async () => {
+  const access_token = await emitter.invoke('store_get', 'access_token')
+  if (!access_token) {
+    await toLogin()
+    return
+  }
+  const flag = await userUser.getUserInfo()
+  if (!flag) {
+    await toLogin()
+    return
+  }
+  await navigationToWin('/home')
+}
+const toLogin = async () => {
   const config = JSON.stringify({
     parent: false,
     url: 'http://localhost:5173/login',
-    win: {
-      width: 1024,
-      height: 480,
-      resizable: false, // 禁止手动调整宽高
-      show: false, // 是否在创建时立即显示
-      frame: false, // 设置无边框
-      transparent: true, // 设置窗口透明
-      backgroundColor: '#00000000'
-    }
+    win: otherWindowsConfig
   })
   await emitter.invoke('open-custom-window', config)
   emitter.send('close')
-  //   await window.api.createWindow(config)
-}, 1 * 1000)
+}
+init()
+// 检查更新
+ipcRenderer.on('update_available', () => {
+  // 提示用户有更新可用
+  alert('A new update is available. Downloading now...')
+})
+ipcRenderer.on('update_downloaded', () => {
+  // ipcRenderer.removeAllListeners('update_downloaded')
+  // 提示用户重启应用以应用更新
+  const isConfirmed = confirm('Update downloaded. Restart now to apply the update?')
+  console.log(222)
+  if (isConfirmed) {
+    console.log(222)
+    emitter.send('restart_app')
+  }
+})
 </script>
 
 <template>

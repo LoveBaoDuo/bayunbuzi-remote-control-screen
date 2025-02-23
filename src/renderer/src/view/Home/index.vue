@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-
 const uniqueId = ref('')
 const getUUID = async () => {
   // @ts-ignore
@@ -12,7 +10,7 @@ getUUID()
 
 <template>
   <div>
-    <div class="text-white" @click="openWind">{{ uniqueId }}</div>
+    <div class="text-white">{{ uniqueId }}</div>
   </div>
 </template>
 

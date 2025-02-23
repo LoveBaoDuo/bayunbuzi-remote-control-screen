@@ -2,15 +2,16 @@ import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
-import ElectronStore from 'electron-store'
 import { globalShortcut } from 'electron'
 import { createCustomWindow } from './utils'
-import { IpcListener } from '@electron-toolkit/typed-ipc/main'
+import { ipc } from './ipc'
+import { IpcEmitter } from '@electron-toolkit/typed-ipc/main'
+import electronUpdater from 'electron-updater'
+const { autoUpdater } = electronUpdater
+// import { IpcEmitter } from '@electron-toolkit/typed-ipc/main';
+// 创建 IpcSender 实例
+const ipcSender = new IpcEmitter()
 
-const ipc = new IpcListener()
-
-// const emitter = new IpcEmitter()
-const store = new ElectronStore()
 let mainWindow
 const wins = new Map()
 ipc.handle('open-custom-window', async (_, arg) => {
@@ -27,9 +28,6 @@ ipc.on('close', (event, id: string) => {
     }
     return
   }
-  // // 处理关闭事件
-  // customWindow.show()
-  // customWindow.close()
   const webContents = event.sender // 获取 WebContents 对象
   const window = BrowserWindow.fromWebContents(webContents) // 从 WebContents 获取 BrowserWindow 实例
   if (window) {
@@ -37,15 +35,8 @@ ipc.on('close', (event, id: string) => {
     window.close()
   }
 })
-// 保存数据
-ipc.on('store_set', (_, key, data) => {
-  // @ts-ignore
-  store.set(key, data)
-})
-// 获取应用数据
-ipc.handle('store_get', (_, key) => {
-  // @ts-ignore
-  return store.get(key)
+ipc.on('restart_app', () => {
+  autoUpdater.quitAndInstall()
 })
 
 function createWindow(): void {
@@ -79,6 +70,7 @@ function createWindow(): void {
   } else {
     mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
   }
+  checkUpdate()
 }
 
 // 快捷键注册
@@ -151,3 +143,18 @@ app.on('will-quit', () => {
 })
 // In this file you can include the rest of your app"s specific main process
 // code. You can also put them in separate files and require them here.
+// 检查更新
+export const checkUpdate = () => {
+  console.log(mainWindow)
+  const win = BrowserWindow.getAllWindows()[0]
+  // 检查更新
+  autoUpdater.checkForUpdatesAndNotify()
+  // 自动更新相关事件
+  autoUpdater.on('update-available', () => {
+    ipcSender.send(win.webContents, 'update_available')
+  })
+
+  autoUpdater.on('update-downloaded', () => {
+    ipcSender.send(win.webContents, 'update_downloaded')
+  })
+}

@@ -2,15 +2,20 @@
 import MenuItem from '../MenuItem/index.vue'
 import Logo from '@renderer/layouts/components/Logo/index.vue'
 import gsap from 'gsap'
-import Avatar from  '@renderer/layouts/components/Avatar/index.vue'
-import { ref } from 'vue'
-import {useRouterStore} from "../../../store/router";
-import {storeToRefs} from "pinia";
-import {MenuType} from "../../type/MenuType";
+import Avatar from '@renderer/layouts/components/Avatar/index.vue'
+import { useRouterStore } from '../../../store/router'
+import { storeToRefs } from 'pinia'
+import { MenuType } from '../../type/MenuType'
+import { useUserStore } from '../../../store/user.store'
+import { toLogin } from '/@/utils'
+
 const isOpen = ref(false)
-const routerStore =  useRouterStore()
+const routerStore = useRouterStore()
+const userStore = useUserStore()
+userStore.initUserInfo()
 routerStore.setMenuList()
-const  { menuList, currentMenu } = storeToRefs(routerStore)
+const { menuList, currentMenu } = storeToRefs(routerStore)
+const { userInfo } = storeToRefs(userStore)
 
 const handleClickLogo = () => {
   isOpen.value = !isOpen.value
@@ -25,8 +30,12 @@ const handleClickLogo = () => {
     delay: 0
   })
 }
-const handleClickMenu  = (menu: MenuType) => {
+const handleClickMenu = (menu: MenuType) => {
   currentMenu.value = menu
+}
+const handleLogout = async () => {
+  await userStore.logout()
+  toLogin()
 }
 </script>
 
@@ -34,18 +43,30 @@ const handleClickMenu  = (menu: MenuType) => {
   <div id="bybz-menu" class="w-20 min-w-20 flex flex-col justify-center w-full text-center h-full">
     <Logo @click="handleClickLogo" style="-webkit-app-region: no-drag" :is-title="isOpen" />
     <ul class="flex-1 relative">
-      <MenuItem v-for="item in menuList" :key="item.path" :config="item" :open="isOpen" :active="currentMenu.path === item.path" @click="handleClickMenu(item)" />
+      <MenuItem
+        v-for="item in menuList"
+        :key="item.path"
+        :config="item"
+        :open="isOpen"
+        :active="currentMenu.path === item.path"
+        @click="handleClickMenu(item)"
+      />
     </ul>
     <ul class="h-30">
-      <li class="flex items-center ">
-        <Avatar src="https://bayunbuzi-1307803943.cos.ap-shanghai.myqcloud.com/unnamed.jpg" />
+      <li class="flex items-center">
+        <Avatar :src="userInfo.avatar" :nickname="userInfo.name" />
         <transition name="fade">
-        <span v-show="isOpen" class="flex-1 font-semibold text-sm truncate">未知晓天空之蓝</span>
+          <span v-show="isOpen" class="flex-1 font-semibold text-sm truncate">{{
+            userInfo.nickname
+          }}</span>
         </transition>
       </li>
-      <MenuItem :config="{title: '退出', icon: 'out', path: ''}"  :open="isOpen"  />
+      <MenuItem
+        :config="{ title: '退出', icon: 'out', path: '' }"
+        :open="isOpen"
+        @click="handleLogout"
+      />
     </ul>
-
   </div>
 </template>
 

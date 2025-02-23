@@ -6,8 +6,6 @@ import Register from './components/Register.vue'
 import mittBus from '/@/utils/mitt'
 import gsap from 'gsap'
 
-import { onMounted, onUnmounted } from 'vue'
-
 const handleOnLoginAndRegisterSwitch = (val: string) => {
   if (val === 'login') {
     gsap.to('.handle-inter', { left: '0.5rem', duration: 0.5, overwrite: 'auto' })

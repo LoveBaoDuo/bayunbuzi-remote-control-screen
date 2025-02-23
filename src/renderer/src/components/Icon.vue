@@ -5,8 +5,6 @@
 </template>
 
 <script setup lang="ts" name="svgIcon">
-import { computed } from 'vue';
-
 // 定义父组件传过来的值
 const props = defineProps({
   // svg 图标组件名字
@@ -23,9 +21,6 @@ const props = defineProps({
     type: String,
   },
 });
-
-// 在线链接、本地引入地址前缀
-
 // 获取 icon 图标名称
 const getIconName = computed(() => {
   return `icon-${props?.name}` ;

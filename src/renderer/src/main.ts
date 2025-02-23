@@ -6,5 +6,5 @@ import App from './App.vue'
 import route from '@renderer/router/index'
 import deactivateds from '@renderer/directive'
 import { createPinia } from 'pinia'
-
+import '../../../resources/font/iconfont.css?asset'
 createApp(App).use(deactivateds).use(route).use(createPinia()).mount('#app')

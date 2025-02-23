@@ -1,11 +1,10 @@
 import { defineStore } from 'pinia'
 import { currentRoutes } from '../router'
 import { RouteRecordRaw } from 'vue-router'
-import { MenuType } from '../../type/MenuType'
 
 interface RouterState {
-  menuList: MenuType[]
-  currentMenu: MenuType
+  menuList: any[]
+  currentMenu: any
 }
 
 export const useRouterStore = defineStore('RouterStore', {
@@ -19,7 +18,7 @@ export const useRouterStore = defineStore('RouterStore', {
         title: item.meta?.title,
         icon: item.meta?.icon,
         path: item.path
-      })) as MenuType[]
+      })) as any[]
       this.currentMenu = this.menuList[0]
     }
   }

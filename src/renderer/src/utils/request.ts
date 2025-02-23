@@ -2,6 +2,8 @@ import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios'
 import qs from 'qs'
 import { encryption, decryption } from './index'
 import { IpcEmitter } from '@electron-toolkit/typed-ipc/renderer'
+import { refreshTokenApi } from '../api/login'
+
 const emitter = new IpcEmitter()
 /**
  * 创建并配置一个 Axios 实例对象
@@ -16,7 +18,10 @@ const service: AxiosInstance = axios.create({
     }
   }
 })
-
+// 是否正在请求刷新token接口的标记
+let isRefreshing: boolean = false
+// 请求队列
+let requests: any[] = []
 /**
  * Axios请求拦截器，对请求进行处理
  * 1. 序列化get请求参数
@@ -25,9 +30,9 @@ const service: AxiosInstance = axios.create({
  * @param config AxiosRequestConfig对象，包含请求配置信息
  */
 service.interceptors.request.use(
-  (config: AxiosRequestConfig): any => {
+  async (config: AxiosRequestConfig): Promise<any> => {
     // 统一增加Authorization请求头, skipToken 跳过增加token
-    const token = emitter.invoke('store_get', 'TOKEN')
+    const token = await emitter.invoke('store_get', 'access_token')
     if (token && !config.headers?.skipToken) {
       config.headers![CommonHeaderEnum.AUTHORIZATION] = `Bearer ${token}`
     }
@@ -55,11 +60,10 @@ service.interceptors.request.use(
  * @param response 响应结果
  * @returns 如果响应成功，则返回响应的data属性；否则，抛出错误或者执行其他操作
  */
-const handleResponse = (response: AxiosResponse<any>) => {
+const handleResponse = (response: AxiosResponse<any>): any => {
   if (response.data.code === 1) {
     throw response.data
   }
-
   // 针对密文返回解密
   if (response.data.encryption) {
     const originData = JSON.parse(
@@ -75,16 +79,29 @@ const handleResponse = (response: AxiosResponse<any>) => {
 /**
  * 添加 Axios 的响应拦截器，用于全局响应结果处理
  */
-service.interceptors.response.use(handleResponse, (error) => {
+service.interceptors.response.use(handleResponse, async (error) => {
   const status = Number(error.response.status) || 200
   if (status === 424) {
-    // useMessageBox()
-    // 	.confirm('令牌状态已过期，请点击重新登录')
-    // 	.then(() => {
-    // 		Session.clear(); // 清除浏览器全部临时缓存
-    // 		window.location.href = '/'; // 去登录页
-    // 		return;
-    // 	});
+    if (error.response.config.data?.grant_type === 'refresh_token') {
+      isRefreshing = false
+      requests = []
+      return Promise.reject(error.response.data)
+    }
+
+    isRefreshing = true
+    const urls = requests.map((config: any) => config.url)
+    if (!urls.includes(error.response.config.url)) {
+      requests.push(error.response.config)
+    }
+    if (isRefreshing) {
+      const refresh_token = await emitter.invoke('store_get', 'refresh_token')
+      const res = await refreshTokenApi(refresh_token)
+      emitter.send('store_set', 'access_token', res.data.access_token)
+      emitter.send('store_set', 'refresh_token', res.data.access_token)
+      requests.map((config) => {
+        service(config)
+      })
+    }
   }
   return Promise.reject(error.response.data)
 })
