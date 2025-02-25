@@ -66,3 +66,13 @@ export const logout = () => {
     method: 'delete',
   });
 };
+/**
+ * 注册用户
+ */
+export const registerUser = (userInfo: object) => {
+  return request({
+    url: '/admin/register/user',
+    method: 'post',
+    data: userInfo,
+  });
+};

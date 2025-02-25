@@ -57,6 +57,31 @@ const descriptor: any = {
       return errors
     }
   },
+  phone: [
+    {
+      type: 'number',
+      required: true,
+      validator: (_, value: string) => {
+        const flag = new RegExp(/\S+/, 'g').test(value)
+        const errors: string[] = []
+        if (!flag) {
+          errors.push('手机号不能为空')
+        }
+        return errors
+      }
+    },
+    {
+      validator: (_, value: string) => {
+        let isPhone = /^1(3\d|4[5-9]|5[0-35-9]|6[2567]|7[0-8]|8\d|9[0-35-9])\d{8}$/
+        const flag = new RegExp(isPhone, 'g').test(value)
+        const errors: string[] = []
+        if (!flag) {
+          errors.push('请输入正确的手机号')
+        }
+        return errors
+      }
+    }
+  ],
   again: {
     type: 'string',
     required: true,
