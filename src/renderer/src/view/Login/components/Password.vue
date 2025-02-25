@@ -139,7 +139,7 @@ onMounted(() => {
         </button>
       </div>
       <p class="text-center text-gray-600 text-sm">
-        没有账号？ <a href="#" class="text-blue-500 hover:underline" @click="goRegister">注册</a>
+        没有账号？ <span  class="text-blue-500 hover:underline" @click="goRegister">注册</span>
       </p>
     </form>
   </div>
