@@ -56,7 +56,7 @@ export const MessageBox = ({
   //   mark.remove()
   // }, duration)
 }
-export const Message = ({ message = '内容', type = 'info', duration = 300000 }) => {
+export const Message = ({ message = '内容', type = 'info', duration = 3000 }) => {
   const div = document.createElement('div')
   const messageEl = document.createElement('span')
   const colse = document.createElement('i')
