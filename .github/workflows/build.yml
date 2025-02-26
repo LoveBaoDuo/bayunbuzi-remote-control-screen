@@ -3,8 +3,6 @@ permissions:
   contents: write  # 给予写入仓库内容的权限
 on:
   push:
-    branches:
-      - master
     tags:
       - v*  # 当推送以v开头的标签时触发此工作流
 
