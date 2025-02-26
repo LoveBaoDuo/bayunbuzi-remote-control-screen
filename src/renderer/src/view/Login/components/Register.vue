@@ -3,6 +3,7 @@ import mittBus from '/@/utils/mitt'
 import { checkAll } from '/@/utils/validator'
 import { registerUser } from '../../../api/login'
 import { Message } from '../../../../../main/messageBox'
+import Button from '/@/components/Button/index.vue'
 // 组件内部状态
 const state = reactive({
   // 是否显示密码
@@ -18,6 +19,7 @@ const state = reactive({
   passwordMessage: '',
   phoneMessage: ''
 })
+const loading = ref(false)
 // 失去焦点时 单个input框的校验
 const handleBlur = async (key: string) => {
   // 调用表单校验的方法
@@ -49,6 +51,7 @@ const handleRegister = async () => {
     return
   }
   try {
+    loading.value = true
     await registerUser(state.ruleForm)
     Message({
       message: '注册成功',
@@ -59,6 +62,8 @@ const handleRegister = async () => {
       message: '注册失败',
       type: 'error'
     })
+  } finally {
+    loading.value = true
   }
 }
 const goLogin = () => {
@@ -105,13 +110,15 @@ const goLogin = () => {
         <p class="text-red-600 text-xs h-4 leading-4" v-text="state.phoneMessage"></p>
       </div>
       <div class="mb-2">
-        <div
+        <Button
           type="submit"
+          :loading="loading"
+          :disabled="loading"
           class="w-full text-center bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
           @click="handleRegister"
         >
           注册
-        </div>
+        </Button>
       </div>
       <p class="text-center text-gray-600 text-sm">
         已有账号？ <span class="text-blue-500 hover:underline" @click="goLogin">登录</span>

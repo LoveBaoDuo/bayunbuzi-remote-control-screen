@@ -6,6 +6,7 @@ import { login } from '@renderer/api/login'
 import { generateUUID, navigationToWin } from '@renderer/utils'
 import { useUserStore } from '../../../store/user.store'
 import { Message } from '../../../../../main/messageBox'
+import Button from '/@/components/Button/index.vue'
 
 const emitter = new IpcEmitter()
 // 登入表单的数据
@@ -17,6 +18,7 @@ const fromData: { username?: string; password?: string; [key: string]: any } = r
   randomStr: '',
   code: ''
 })
+const loading = ref(false)
 const imgSrc = ref('')
 // 错误信息DOM元素
 const resErrorInfo = ref('')
@@ -62,6 +64,7 @@ const handleLogin = async () => {
       code.value = result.code
       return
     }
+    loading.value = true
     const res = (await login(fromData)) as any
     emitter.send('store_set', 'access_token', res.access_token)
     emitter.send('store_set', 'refresh_token', res.refresh_token)
@@ -73,6 +76,7 @@ const handleLogin = async () => {
       message: resErrorInfo.value
     })
   } finally {
+    loading.value = false
     getVerifyCode()
   }
 }
@@ -131,15 +135,17 @@ onMounted(() => {
         <p class="text-red-600 text-xs h-4 leading-4" v-text="code"></p>
       </div>
       <div class="mb-6">
-        <button
+        <Button
           class="w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
-          @click.prevent="handleLogin"
+          :loading="loading"
+          :disabled="loading"
+          @click="handleLogin"
         >
           登录
-        </button>
+        </Button>
       </div>
       <p class="text-center text-gray-600 text-sm">
-        没有账号？ <span  class="text-blue-500 hover:underline" @click="goRegister">注册</span>
+        没有账号？ <span class="text-blue-500 hover:underline" @click="goRegister">注册</span>
       </p>
     </form>
   </div>
