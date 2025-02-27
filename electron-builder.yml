@@ -41,10 +41,10 @@ linux:
 appImage:
   artifactName: ${name}-${version}.${ext}
 npmRebuild: false
-publish:
-  provider: github
-  owner: LoveBaoDuo
-  repo: bayunbuzi-remote-control-screen
-  releaseType: 'release'
+#publish:
+#  provider: github
+#  owner: LoveBaoDuo
+#  repo: bayunbuzi-remote-control-screen
+#  releaseType: 'release'
 electronDownload:
   mirror: https://npmmirror.com/mirrors/electron/
