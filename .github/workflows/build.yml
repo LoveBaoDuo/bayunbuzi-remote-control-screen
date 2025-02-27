@@ -20,7 +20,9 @@ jobs:
     steps:
       - name: Check out git repository
         uses: actions/checkout@v4  # 检出代码仓库
-
+      - name: Debug GH_TOKEN
+        run: |
+          echo "GH_TOKEN is set: ${{ secrets.GH_TOKEN != '' }}"
       - name: Install Node.js
         uses: actions/setup-node@v4
         with:
