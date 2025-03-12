@@ -1,6 +1,6 @@
 {
   "name": "bayunbuzi-remote-control-screen",
-  "version": "1.0.12",
+  "version": "1.0.5",
   "description": "An Electron application with Vue and TypeScript",
   "main": "./out/main/index.js",
   "author": "example.com",
@@ -36,6 +36,7 @@
     "mitt": "^3.0.1",
     "pinia": "^2.2.2",
     "qs": "^6.13.1",
+    "socket.io-client": "^4.8.1",
     "uuid": "^10.0.0",
     "winston": "^3.17.0"
   },

@@ -20,13 +20,10 @@ const name = computed(() => {
 </script>
 
 <template>
-  <div class="ml-3">
-    <img v-if="src" class="w-12 h-12 rounded-lg" :src="src" v-bind="$attrs" />
-    <p
-      v-else
-      class="w-12 h-12 rounded-lg font-semibold bg-blue-400 text-white text-center leading-[48px]"
-    >
-      {{ name }}
+  <div class="w-12 h-12 ml-4 leading-[48px]">
+    <img v-if="src" class="rounded-md" :src="src" v-bind="$attrs" />
+    <p v-else class="h-full rounded-md font-semibold bg-blue-400 text-white text-center ">
+      {{ name || 'A' }}
     </p>
   </div>
 </template>

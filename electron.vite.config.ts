@@ -1,7 +1,7 @@
 import { resolve } from 'path'
 import { defineConfig, externalizeDepsPlugin } from 'electron-vite'
-import vueSetupExtend from 'vite-plugin-vue-setup-extend';
-import AutoImport from 'unplugin-auto-import/vite';
+import vueSetupExtend from 'vite-plugin-vue-setup-extend'
+import AutoImport from 'unplugin-auto-import/vite'
 import vue from '@vitejs/plugin-vue'
 import tailwindcss from 'tailwindcss'
 import autoprefixer from 'autoprefixer'
@@ -49,20 +49,27 @@ export default defineConfig({
           //单体架构下特殊处理代码生成模块代理
           target: 'http://159.75.188.129:9999',
           changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/api/, ''),
+          rewrite: (path) => path.replace(/^\/api/, '')
+        },
+        '/api/ns': {
+          target: 'http://127.0.0.1:8099', // 目标服务器地址
+          ws: true, // 是否启用 WebSocket
+          changeOrigin: true, // 是否修改请求头中的 Origin 字段
+          rewrite: (path) => path.replace(/^\/api/, '')
         },
         '/api': {
           target: 'http://159.75.188.129:9999', // 目标服务器地址
           ws: true, // 是否启用 WebSocket
           changeOrigin: true, // 是否修改请求头中的 Origin 字段
-          rewrite: (path) => path.replace(/^\/api/, ''),
+          rewrite: (path) => path.replace(/^\/api/, '')
         },
+
         '^/ws/info/.*': {
           target: 'http://159.75.188.129:9999', // 目标服务器地址
           ws: true, // 是否启用 WebSocket
-          changeOrigin: true,
-        },
-      },
+          changeOrigin: true
+        }
+      }
     },
     css: {
       postcss: {

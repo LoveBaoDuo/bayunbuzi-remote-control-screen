@@ -22,6 +22,26 @@ export const currentRoutes: RouteRecordRaw[] = [
         }
       },
       {
+        path: 'info',
+        component: () => import('@renderer/view/Info/index.vue'),
+        name: 'Info',
+        meta: {
+          title: '消息',
+          icon: 'comment',
+          hidden: false
+        }
+      },
+      {
+        path: 'friends',
+        component: () => import('@renderer/view/Friends/index.vue'),
+        name: 'Friends',
+        meta: {
+          title: '好友',
+          icon: 'user',
+          hidden: false
+        }
+      },
+      {
         path: 'setting',
         component: () => import('@renderer/view/Setting/index.vue'),
         name: 'Setting',

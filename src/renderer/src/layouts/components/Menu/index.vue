@@ -62,7 +62,7 @@ const handleLogout = async () => {
         </transition>
       </li>
       <MenuItem
-        :config="{ title: '退出', icon: 'out', path: '' }"
+        :config="{ title: '退出', icon: 'Import', path: '' }"
         :open="isOpen"
         @click="handleLogout"
       />

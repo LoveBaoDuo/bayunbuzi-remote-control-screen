@@ -54,17 +54,17 @@ autoUpdater.on('update-available', (info) => {
 })
 
 // 没有新版本时
-autoUpdater.on('update-not-available', (info) => {
-  dialog.showMessageBox({
-    type: 'info',
-    title: '更新提示',
-    message: `当前版本 ${info.version} 已是最新版本`
-  })
+autoUpdater.on('update-not-available', () => {
+  // dialog.showMessageBox({
+  //   type: 'info',
+  //   title: '更新提示',
+  //   message: `当前版本 ${info.version} 已是最新版本`
+  // })
 })
 // 监听下载进度
 autoUpdater.on('download-progress', (prog) => {
   const win = BrowserWindow.getAllWindows()[0]
-  logger.info(`网速：${prog.bytesPerSecond / 1000}，进度${prog.percent}`)
+  logger.info(`网速：${prog.bytesPerSecond / 1000}，进度${prog.percent.toFixed(2)}%`)
   win.webContents.send('downloadProgress', {
     speed: Math.ceil(prog.bytesPerSecond / 1000), // 网速
     percent: Math.ceil(prog.percent) // 百分比

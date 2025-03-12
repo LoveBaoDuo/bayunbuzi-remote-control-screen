@@ -33,10 +33,10 @@ onUnmounted(() => {
 
 <template>
   <div class="relative h-full p-2 shadow-xl">
-    <div class="absolute right-0 top-0 z-10">
+    <div class="absolute right-0 top-0 z-[9999999]">
       <Nav color="#232946FF" :full-screen="false" />
     </div>
-    <HandleInter class="absolute handle-inter" />
+    <HandleInter class="absolute handle-inter z-[999]" />
     <div class="h-full flex justify-around">
       <Register />
       <Password />

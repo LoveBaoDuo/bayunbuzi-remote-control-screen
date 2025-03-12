@@ -46,7 +46,7 @@ function createWindow(): void {
       sandbox: false
     }
   })
-
+  updater()
   mainWindow.on('ready-to-show', () => {
     mainWindow.show()
   })
@@ -62,7 +62,6 @@ function createWindow(): void {
   } else {
     mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
   }
-  updater()
 }
 
 // 快捷键注册

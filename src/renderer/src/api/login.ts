@@ -76,3 +76,9 @@ export const registerUser = (userInfo: object) => {
     data: userInfo,
   });
 };
+export const getHellorApi = () => {
+  return request({
+    url: '/ns/hellor',
+    method: 'get',
+  });
+};

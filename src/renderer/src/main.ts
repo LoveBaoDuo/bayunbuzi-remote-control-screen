@@ -7,4 +7,6 @@ import route from '@renderer/router/index'
 import deactivateds from '@renderer/directive'
 import { createPinia } from 'pinia'
 import '../../../resources/font/iconfont.css?asset'
-createApp(App).use(deactivateds).use(route).use(createPinia()).mount('#app')
+import setupDirectives from './directives'
+
+createApp(App).use(deactivateds).use(setupDirectives).use(route).use(createPinia()).mount('#app')

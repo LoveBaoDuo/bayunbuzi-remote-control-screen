@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import Icon from '@renderer/components/Icon.vue'
-import { ref } from 'vue'
 import { IpcEmitter } from '@electron-toolkit/typed-ipc/renderer'
 const emitter = new IpcEmitter()
 defineProps({
@@ -28,9 +27,9 @@ const handleMinimize = () => {
 </script>
 
 <template>
-  <div class="h-full flex justify-end align-middle pr-1 pt-1 box-border">
+  <div class="h-full flex justify-end align-middle pr-1 pt-1 box-border" style="-webkit-app-region: no-drag">
     <Icon class="mr-2" name="minus" :size="20" :color="color" @click="handleMinimize" />
-    <div v-if="fullScreen">
+    <template v-if="fullScreen">
       <Icon
         v-if="!isFullScreen"
         class="mr-2"
@@ -47,7 +46,7 @@ const handleMinimize = () => {
         :color="color"
         @click="handleToggleFullScreen"
       />
-    </div>
+    </template>
     <Icon class="cursor-pointer" name="close" :size="20" :color="color" @click="handleCloseApp" />
   </div>
 </template>

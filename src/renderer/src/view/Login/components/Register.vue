@@ -63,7 +63,7 @@ const handleRegister = async () => {
       type: 'error'
     })
   } finally {
-    loading.value = true
+    loading.value = false
   }
 }
 const goLogin = () => {
@@ -104,7 +104,7 @@ const goLogin = () => {
           v-model="state.ruleForm.phone"
           id="username"
           class="w-full text-gray-600 mt-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-          placeholder="请输入用户名"
+          placeholder="请输入手机号"
           @blur="handleBlur('phone')"
         />
         <p class="text-red-600 text-xs h-4 leading-4" v-text="state.phoneMessage"></p>
