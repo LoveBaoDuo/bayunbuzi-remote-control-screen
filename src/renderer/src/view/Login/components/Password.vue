@@ -81,6 +81,9 @@ const handleLogin = async () => {
   }
 }
 const goRegister = () => {
+  username.value = ''
+  password.value = ''
+  code.value = ''
   mittBus.emit('onLoginAndRegisterSwitch', 'register')
 }
 onMounted(() => {
@@ -91,8 +94,7 @@ onMounted(() => {
 <template>
   <div class="p-8 max-w-md w-full">
     <h2 class="text-2xl font-bold text-center text-gray-700">登录</h2>
-    <p class="text-red-600" v-text="resErrorInfo"></p>
-    <form style="-webkit-app-region: no-drag">
+    <form >
       <div class="mb-2">
         <label for="username" class="block text-gray-600">用户名</label>
         <input
@@ -128,7 +130,7 @@ onMounted(() => {
           <img
             :src="imgSrc"
             @click="getVerifyCode"
-            class="cursor-pointer w-24 h-10 object-cover border rounded-lg mt-2"
+            class="cursor-pointer w-24 h-10 object-cover border rounded-lg mt-2 no-drag"
             alt="验证码"
           />
         </div>
@@ -145,7 +147,7 @@ onMounted(() => {
         </Button>
       </div>
       <p class="text-center text-gray-600 text-sm">
-        没有账号？ <span class="text-blue-500 hover:underline" @click="goRegister">注册</span>
+        没有账号？ <span class="text-blue-500 hover:underline no-drag" @click="goRegister">注册</span>
       </p>
     </form>
   </div>

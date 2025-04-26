@@ -10,8 +10,8 @@ defineProps<{
   <div class="h-full">
     <div class="h-[60px] px-2 py-4">
     </div>
-   <div style="-webkit-app-region: no-drag">
-     <UserProfile />
+   <div >
+     <UserProfile :data="data" />
    </div>
     </div>
 </template>

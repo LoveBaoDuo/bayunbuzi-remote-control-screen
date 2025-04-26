@@ -1,6 +1,6 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios'
 import qs from 'qs'
-import { encryption, decryption } from './index'
+import { encryption, decryption, toLogin } from './index'
 import { IpcEmitter } from '@electron-toolkit/typed-ipc/renderer'
 import { refreshTokenApi } from '../api/login'
 
@@ -94,13 +94,17 @@ service.interceptors.response.use(handleResponse, async (error) => {
       requests.push(error.response.config)
     }
     if (isRefreshing) {
-      const refresh_token = await emitter.invoke('store_get', 'refresh_token')
-      const res = await refreshTokenApi(refresh_token)
-      emitter.send('store_set', 'access_token', res.data.access_token)
-      emitter.send('store_set', 'refresh_token', res.data.access_token)
-      requests.map((config) => {
-        service(config)
-      })
+      try {
+        // await checkTokenApi()
+        const res: any = await refreshTokenApi()
+        emitter.send('store_set', 'access_token', res.access_token)
+        requests.map((config) => {
+          service(config)
+        })
+      } catch (e) {
+        console.log(e)
+        await toLogin()
+      }
     }
   }
   return Promise.reject(error.response.data)

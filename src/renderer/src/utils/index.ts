@@ -1,7 +1,9 @@
 // @ts-ignore
 import * as CryptoJS from 'crypto-js'
 import { IpcEmitter } from '@electron-toolkit/typed-ipc/renderer'
+import { pinyin } from 'pinyin-pro'
 import { minWindowsConfig, otherWindowsConfig } from '../config/windows.config'
+
 const emitter = new IpcEmitter()
 
 /**
@@ -81,6 +83,9 @@ export async function navigationToWin(uri: string) {
 }
 
 export const toLogin = async () => {
+  emitter.send('store_del', 'refresh_token')
+  emitter.send('store_del', 'access_token')
+  emitter.send('store_del', 'userInfo')
   const config = JSON.stringify({
     parent: false,
     url: '/login',
@@ -88,4 +93,58 @@ export const toLogin = async () => {
   })
   await emitter.invoke('open-custom-window', config)
   emitter.send('close')
+}
+
+function getFirstLetter(str: string): string {
+  if (!str?.trim()) return '#'
+
+  const firstChar = str[0]
+
+  // 英文字母
+  if (/[a-z]/i.test(firstChar)) {
+    return firstChar.toUpperCase()
+  }
+
+  // 中文字符
+  if (/[\u4e00-\u9fa5]/.test(firstChar)) {
+    try {
+      const [firstPy] = pinyin(firstChar, {
+        pattern: 'first',
+        type: 'array'
+      })
+      return firstPy?.[0]?.toUpperCase() || '#'
+    } catch {
+      return '#'
+    }
+  }
+
+  // 其他字符
+  return '#'
+}
+
+export function groupUsersByFirstLetter(users: any[]) {
+  const groups: Record<string, any[]> = {}
+
+  users.forEach((user) => {
+    const displayName = String(user.nickname || user.username || '')
+    const letter = getFirstLetter(displayName)
+    ;(groups[letter] ||= []).push(user)
+  })
+
+  const groupOrder = Object.keys(groups).sort((a, b) =>
+    a === '#' ? 1 : b === '#' ? -1 : a.localeCompare(b)
+  )
+
+  groupOrder.forEach((letter) => {
+    groups[letter].sort((a, b) => {
+      // 使用相同的名称比较逻辑
+      const nameA = String(a.nickname || a.username || '')
+
+      const nameB = String(b.nickname || b.username || '')
+
+      return nameA.localeCompare(nameB)
+    })
+  })
+
+  return { groupOrder, groups }
 }

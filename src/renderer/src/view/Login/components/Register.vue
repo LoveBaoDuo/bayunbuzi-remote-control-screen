@@ -53,6 +53,7 @@ const handleRegister = async () => {
   try {
     loading.value = true
     await registerUser(state.ruleForm)
+    goLogin()
     Message({
       message: '注册成功',
       type: 'success'
@@ -67,6 +68,9 @@ const handleRegister = async () => {
   }
 }
 const goLogin = () => {
+  state.usernameMessage = ''
+  state.passwordMessage = ''
+  state.phoneMessage = ''
   mittBus.emit('onLoginAndRegisterSwitch', 'login')
 }
 </script>
@@ -74,7 +78,7 @@ const goLogin = () => {
 <template>
   <div class="p-8 max-w-md w-full">
     <h2 class="text-2xl font-bold text-center text-gray-700">注册</h2>
-    <form style="-webkit-app-region: no-drag">
+    <form>
       <div class="mb-2">
         <label for="email" class="block text-gray-600">用户名</label>
         <input
@@ -121,7 +125,7 @@ const goLogin = () => {
         </Button>
       </div>
       <p class="text-center text-gray-600 text-sm">
-        已有账号？ <span class="text-blue-500 hover:underline" @click="goLogin">登录</span>
+        已有账号？ <span class="text-blue-500 hover:underline no-drag" @click="goLogin">登录</span>
       </p>
     </form>
   </div>

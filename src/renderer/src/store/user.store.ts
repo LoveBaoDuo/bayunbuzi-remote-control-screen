@@ -6,6 +6,7 @@ const emitter = new IpcEmitter()
 
 interface UserState {
   userInfo: {
+    userId: string
     username: string
     avatar: string
     nickname: string
@@ -18,6 +19,7 @@ interface UserState {
 export const useUserStore = defineStore('UserStore', {
   state: (): UserState => ({
     userInfo: {
+      userId: '',
       username: '',
       avatar: '',
       nickname: '',
@@ -26,6 +28,9 @@ export const useUserStore = defineStore('UserStore', {
       phone: ''
     }
   }),
+  getters: {
+    getUserId: (state: UserState) => state.userInfo?.userId
+  },
   actions: {
     /**
      * 初始化用户信息
@@ -38,13 +43,13 @@ export const useUserStore = defineStore('UserStore', {
       this.userInfo.email = userInfo.email
       this.userInfo.name = userInfo.name
       this.userInfo.phone = userInfo.phone
+      this.userInfo.userId = userInfo.userId
     },
     /**
      * 获取用户信息
      */
     async getUserInfo(): Promise<any> {
       try {
-        // console.log(logger)
         const res = await getUserInfo()
         this.userInfo.username = res.data.sysUser.username
         this.userInfo.avatar = res.data.sysUser.avatar
@@ -52,7 +57,9 @@ export const useUserStore = defineStore('UserStore', {
         this.userInfo.email = res.data.sysUser.email
         this.userInfo.name = res.data.sysUser.name
         this.userInfo.phone = res.data.sysUser.phone
-        const userInfo = {...this.userInfo}
+        this.userInfo.userId = res.data.sysUser.userId
+        console.log(res)
+        const userInfo = { ...this.userInfo }
         emitter.send('store_set', 'userInfo', userInfo)
         return true
       } catch (e: any) {

@@ -2,14 +2,14 @@
 import MenuItem from '../MenuItem/index.vue'
 import Logo from '@renderer/layouts/components/Logo/index.vue'
 import gsap from 'gsap'
-import Avatar from '@renderer/layouts/components/Avatar/index.vue'
+import Avatar from '/@/components/Avatar/index.vue'
 import { useRouterStore } from '../../../store/router'
 import { storeToRefs } from 'pinia'
-import { MenuType } from '../../type/MenuType'
 import { useUserStore } from '../../../store/user.store'
 import { toLogin } from '/@/utils'
 
 const isOpen = ref(false)
+const route = useRoute()
 const routerStore = useRouterStore()
 const userStore = useUserStore()
 userStore.initUserInfo()
@@ -30,26 +30,30 @@ const handleClickLogo = () => {
     delay: 0
   })
 }
-const handleClickMenu = (menu: MenuType) => {
-  currentMenu.value = menu
-}
 const handleLogout = async () => {
   await userStore.logout()
   toLogin()
 }
+watchEffect(() => {
+  currentMenu.value = {
+    title: route.meta?.title,
+    icon: route.meta?.icon,
+    path: route.path,
+    name: route.name
+  }
+})
 </script>
 
 <template>
   <div id="bybz-menu" class="w-20 min-w-20 flex flex-col justify-center w-full text-center h-full">
-    <Logo @click="handleClickLogo" style="-webkit-app-region: no-drag" :is-title="isOpen" />
+    <Logo @click="handleClickLogo" :is-title="isOpen" />
     <ul class="flex-1 relative">
       <MenuItem
         v-for="item in menuList"
         :key="item.path"
         :config="item"
         :open="isOpen"
-        :active="currentMenu.path === item.path"
-        @click="handleClickMenu(item)"
+        :active="currentMenu.name === item.name"
       />
     </ul>
     <ul class="h-30">

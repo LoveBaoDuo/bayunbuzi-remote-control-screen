@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ContactChildrenType } from '../friends'
-import Avatar from '@renderer/layouts/components/Avatar/index.vue'
+import Avatar from '/@/components/Avatar/index.vue'
 
 defineProps<{
   data: ContactChildrenType

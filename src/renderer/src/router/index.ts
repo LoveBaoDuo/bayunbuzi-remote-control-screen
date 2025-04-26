@@ -15,6 +15,7 @@ export const currentRoutes: RouteRecordRaw[] = [
         path: 'home',
         component: () => import('@renderer/view/Home/index.vue'),
         name: 'Home',
+        children: [],
         meta: {
           title: '首页',
           icon: 'home',

@@ -1,25 +1,42 @@
-import { io } from 'socket.io-client'
-import { onMounted, onUnmounted } from 'vue'
+import { io, Socket } from 'socket.io-client'
 import { MessageType, PayloadType } from '../layouts/type/MessageType'
-
-export const useSocket = ({ roomId, userId, onMessage }: MessageType) => {
-  const socket = io('ws://localhost:8099', {
-    transports: ['websocket'],
-  })
-
-  onMounted(() => {
-    socket.on('connect', () => {
-      socket.emit('joinRoom', { roomId, userId })
-      socket.on('message', onMessage)
-    })
-  })
-  onUnmounted(() => {
-    socket.disconnect()
-  })
-  const sendMessage = (payload: PayloadType) => {
-    socket.emit('message', payload)
+// websockt链接
+let socket: Socket
+export const useSocket = ({ roomId, onMessage }: MessageType) => {
+  const handleJoinStatus = () => {
+    console.log('join success')
   }
+  const handleConnect = () => {
+    // 链接到房间
+    socket.emit('joinRoom', { roomId })
+    socket.on('joinStatus', handleJoinStatus)
+    socket.on('message', onMessage)
+  }
+  const connect = () => {
+    if (!socket) {
+      socket = io(import.meta.env.VITE_API_WS_URL, {
+        transports: ['websocket']
+      })
+    } else {
+      socket.connect()
+    }
+    socket.on('connect', handleConnect)
+  }
+
+  const disconnect = () => {
+    if (!socket) return
+    socket.disconnect()
+    socket.removeAllListeners()
+  }
+  const sendMessage = (payload: PayloadType) => {
+    socket.emit('sendMessage', payload)
+  }
+  onMounted(() => {
+    connect()
+  })
   return {
-    sendMessage
+    connect,
+    sendMessage,
+    disconnect
   }
 }

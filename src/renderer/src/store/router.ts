@@ -17,7 +17,8 @@ export const useRouterStore = defineStore('RouterStore', {
       this.menuList = currentRoutes[0].children?.map((item: RouteRecordRaw) => ({
         title: item.meta?.title,
         icon: item.meta?.icon,
-        path: item.path
+        path: item.path,
+        name: item.name,
       })) as any[]
       this.currentMenu = this.menuList[0]
     }

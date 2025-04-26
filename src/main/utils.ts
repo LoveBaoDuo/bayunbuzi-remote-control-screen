@@ -48,6 +48,7 @@ export const createCustomWindow = async (
   customWindow.once('ready-to-show', () => {
     customWindow.show()
   })
+
   if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
     await customWindow.loadURL(process.env['ELECTRON_RENDERER_URL'] + '/#' + options.url)
   } else {
@@ -55,5 +56,15 @@ export const createCustomWindow = async (
       hash: options.url
     })
   }
+  // 关闭右键菜单
+  customWindow.hookWindowMessage(278, () => {
+    customWindow.setEnabled(false)
+    setTimeout(() => {
+      customWindow.setEnabled(true)
+    }, 100)
+    // e.setEnabled(false) // 窗口禁用
+    return true
+  })
+
   return customWindow
 }

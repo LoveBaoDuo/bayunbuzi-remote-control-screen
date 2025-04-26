@@ -1,21 +1,38 @@
 <script setup lang="ts">
-import Icon from '@renderer/components/Icon.vue'
+withDefaults(
+  defineProps<{
+    icon?: string
+    placeholder?: string
+  }>(),
+  {
+    icon: 'search',
+    placeholder: '搜索'
+  }
+)
+const emit = defineEmits(['input'])
+const value = defineModel({
+  default: ''
+})
+const handleInput = (e: Event) => {
+  value.value = (e.target as HTMLInputElement).value
+  emit('input', value.value)
+}
 </script>
 
 <template>
-  <div >
-    <div class="px-2 py-4">
-      <div class="flex">
-        <div class="border rounded-md relative">
-          <Icon class="absolute top-[5px] left-1" color="#9ca3af" name="serach" />
+  <div>
+    <div class="px-2 py-4 no-drag">
+      <div class="flex w-full">
+        <div class="border relative flex-1">
+          <Icon class="absolute top-[5px] left-1" color="#9ca3af" :name="icon" />
           <input
+            :value="value"
             class="w-full text-sm h-6 bg-gray-200/50 focus:bg-white focus:outline-none pl-5"
-            placeholder="搜索"
+            :placeholder="placeholder"
+            @input="handleInput"
           />
         </div>
-        <div class=" px-1 ml-2 bg-gray-200 rounded-md flex items-center justify-center">
-          <Icon :size="20" color="#9ca3af" name="addteam" />
-        </div>
+        <slot name="after"></slot>
       </div>
     </div>
   </div>

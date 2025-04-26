@@ -27,7 +27,7 @@ const handleMinimize = () => {
 </script>
 
 <template>
-  <div class="h-full flex justify-end align-middle pr-1 pt-1 box-border" style="-webkit-app-region: no-drag">
+  <div class="h-full flex justify-end align-middle pr-1 pt-1 box-border " >
     <Icon class="mr-2" name="minus" :size="20" :color="color" @click="handleMinimize" />
     <template v-if="fullScreen">
       <Icon

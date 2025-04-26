@@ -114,6 +114,15 @@ app.whenReady().then(() => {
   // })
   createWindow()
   registryShortcut()
+  // 关闭右键菜单
+  mainWindow.hookWindowMessage(278, () => {
+    mainWindow.setEnabled(false)
+    setTimeout(() => {
+      mainWindow.setEnabled(true)
+    }, 100)
+    // e.setEnabled(false) // 窗口禁用
+    return true
+  })
   app.on('activate', function () {
     // On macOS it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.

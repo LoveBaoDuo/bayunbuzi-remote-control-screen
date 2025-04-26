@@ -1,5 +1,5 @@
 <template>
-  <svg class="svg-icon icon" :style="setIconImgOutStyle">
+  <svg class="svg-icon icon no-drag" :style="setIconImgOutStyle">
     <use :xlink:href="`#${getIconName}`" />
   </svg>
 </template>

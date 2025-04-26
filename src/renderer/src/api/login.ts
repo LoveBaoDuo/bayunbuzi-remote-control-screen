@@ -25,7 +25,7 @@ export const login = (data: any) => {
   return request({
     url: '/auth/oauth2/token',
     method: 'post',
-    data: { ...data, password: encPassword },
+    data: { ...data, password: encPassword, scope: 'server' },
     headers: {
       skipToken: true,
       Authorization: basicAuth,
@@ -33,13 +33,35 @@ export const login = (data: any) => {
     }
   })
 }
-export const refreshTokenApi = async (refresh_token: string) => {
+
+/**
+ * 校验令牌，若有效期小于半小时自动续期
+ * @param refreshLock
+ */
+export const checkTokenApi = async () => {
+  // 获取当前选中的 basic 认证信息
+  const basicAuth = await emitter.invoke('store_get', 'basicAuth')
+  const token = await emitter.invoke('store_get', 'access_token')
+  return request({
+    url: '/auth/token/check_token',
+    headers: {
+      skipToken: true,
+      Authorization: basicAuth,
+      'Content-Type': FORM_CONTENT_TYPE
+    },
+    method: 'get',
+    params: { token: `Bearer ${token}` }
+  })
+}
+
+export const refreshTokenApi = async () => {
+  const refresh_token = await emitter.invoke('store_get', 'refresh_token')
   const grant_type = 'refresh_token'
   const scope = 'server'
 
   // 获取当前选中的 basic 认证信息
-  const basicAuth = await emitter.invoke('store_get')
-
+  const basicAuth = await emitter.invoke('store_get', 'basicAuth')
+  const params = new URLSearchParams({ refresh_token, grant_type, scope })
   return request({
     url: '/auth/oauth2/token',
     headers: {
@@ -48,7 +70,7 @@ export const refreshTokenApi = async (refresh_token: string) => {
       'Content-Type': FORM_CONTENT_TYPE
     },
     method: 'post',
-    data: { refresh_token, grant_type, scope }
+    data: params
   })
 }
 /**
@@ -57,15 +79,15 @@ export const refreshTokenApi = async (refresh_token: string) => {
 export const getUserInfo = () => {
   return request({
     url: '/admin/user/info',
-    method: 'get',
-  });
-};
+    method: 'get'
+  })
+}
 export const logout = () => {
   return request({
     url: '/auth/token/logout',
-    method: 'delete',
-  });
-};
+    method: 'delete'
+  })
+}
 /**
  * 注册用户
  */
@@ -73,12 +95,6 @@ export const registerUser = (userInfo: object) => {
   return request({
     url: '/admin/register/user',
     method: 'post',
-    data: userInfo,
-  });
-};
-export const getHellorApi = () => {
-  return request({
-    url: '/ns/hellor',
-    method: 'get',
-  });
-};
+    data: userInfo
+  })
+}

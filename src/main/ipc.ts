@@ -6,7 +6,6 @@ export const ipc = new IpcListener()
 export const emitter = new IpcEmitter()
 // 保存数据
 ipc.on('store_set', (_, key, data) => {
-  console.log(key, data)
   if (!data) return
   // @ts-ignore
   store.set(key, data)

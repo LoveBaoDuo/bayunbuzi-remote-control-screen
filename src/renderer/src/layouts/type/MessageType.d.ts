@@ -1,16 +1,21 @@
-export interface PayloadType {
-  roomId: string | number
-  userId: string | number
-  sendUserId: string | number
-  message: {
-    text: string
-    type: string
-  }
+export interface ContentType{
+  id?: string;
+  content: string;
+  type: '0' | '1',
+  userId: string
 }
 
+export interface PayloadType {
+  roomId: string | number;
+  // 业务数据
+  content: ContentType[];
+}
+export interface SuccessType {
+  code: 0 | 1
+  data: any,
+  msg: string,
+}
 export interface MessageType {
   roomId: string | number
-  userId: string | number
-
-  onMessage(payload: PayloadType): any
+  onMessage(payload: SuccessType): any
 }

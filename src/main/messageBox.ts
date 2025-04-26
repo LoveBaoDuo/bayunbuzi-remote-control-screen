@@ -65,21 +65,21 @@ export const Message = ({ message = '内容', type = 'info', duration = 3000 }) 
     case 'error':
       icon.className = 'iconfont icon-gantanhao px-2 !text-2xl'
       div.className =
-        'absolute top-[20%] left-[50%] translate-x-[-50%] translate-y-[-50%] flex justify-between items-center w-[20vw] h-[10vh] bg-[#fef0f0] text-red-600 rounded-md shadow-2xl z-[99999]'
+        'absolute top-[20%] left-[50%] translate-x-[-50%] translate-y-[-50%] flex justify-between items-center min-w-[20vw] h-[10vh] bg-[#fef0f0] text-red-600 rounded-md shadow-2xl z-[99999]'
       break
     case 'success':
       icon.className = 'iconfont icon-gantanhao  px-2 !text-2xl'
       div.className =
-        'absolute top-[20%] left-[50%] translate-x-[-50%] translate-y-[-50%] flex justify-between items-center w-[20vw] h-[10vh] bg-[#f0f9eb] text-green-600 rounded-md shadow-2xl z-[99999]'
+        'absolute top-[20%] left-[50%] translate-x-[-50%] translate-y-[-50%] flex justify-between items-center min-w-[20vw] h-[10vh] bg-[#f0f9eb] text-green-600 rounded-md shadow-2xl z-[99999]'
       break
     default:
       icon.className = 'iconfont icon-gantanhao px-2 !text-2xl'
       div.className =
-        'absolute top-[20%] left-[50%] translate-x-[-50%] translate-y-[-50%] flex justify-between items-center w-[20vw] h-[10vh] bg-white text-black rounded-md shadow-2xl z-[99999]'
+        'absolute top-[20%] left-[50%] translate-x-[-50%] translate-y-[-50%] flex justify-between items-center min-w-[20vw] h-[10vh] bg-white text-black rounded-md shadow-2xl z-[99999]'
   }
   messageEl.innerText = message
   messageEl.className = 'font-bold flex-1'
-  colse.className = 'iconfont icon-close cursor-pointer px-2'
+  colse.className = 'iconfont icon-close cursor-pointer px-2 no-drag'
   colse.onclick = () => div.remove()
 
   div.append(icon)

@@ -1,14 +1,5 @@
 <script setup lang="ts">
-import { useSocket } from '../../hooks/socket'
-import { PayloadType } from '../../layouts/type/MessageType'
 
-const { sendMessage } = useSocket({
-  roomId: 1,
-  userId: 2,
-  onMessage: (payload: PayloadType) => {
-    console.log('收到消息', payload)
-  }
-})
 const openWind = async () => {
   const config = JSON.stringify({
     width: 800,
@@ -24,12 +15,6 @@ const openWind = async () => {
   window.api.createWindow(config)
 }
 const handleSendMessage = async () => {
-  sendMessage({
-    message: { text: '测试', type: '0' },
-    roomId: '1',
-    userId: '2',
-    sendUserId: '3',
-  })
 }
 </script>
 
