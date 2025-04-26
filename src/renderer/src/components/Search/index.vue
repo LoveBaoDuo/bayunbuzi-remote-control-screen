@@ -1,16 +1,14 @@
 <script setup lang="ts">
-import Icon from '@renderer/components/Icon.vue'
-
-defineProps({
-  icon: {
-    type: String,
-    default: 'serach'
-  },
-  placeholder: {
-    type: String,
-    default: '搜索'
+withDefaults(
+  defineProps<{
+    icon?: string
+    placeholder?: string
+  }>(),
+  {
+    icon: 'search',
+    placeholder: '搜索'
   }
-})
+)
 const emit = defineEmits(['input'])
 const value = defineModel({
   default: ''
@@ -22,7 +20,7 @@ const handleInput = (e: Event) => {
 </script>
 
 <template>
-  <div >
+  <div>
     <div class="px-2 py-4 no-drag">
       <div class="flex w-full">
         <div class="border relative flex-1">

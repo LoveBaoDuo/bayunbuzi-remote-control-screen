@@ -1,20 +1,18 @@
 <script setup lang="ts">
 import Icon from '@renderer/components/Icon.vue'
 
-const props = defineProps({
-  width: {
-    type: String,
-    default: '30vw'
-  },
-  title: {
-    type: String,
-    default: '提示'
-  },
-  mount: {
-    type: String,
-    default: 'body',
+const props = withDefaults(
+  defineProps<{
+    width?: string
+    title?: string
+    mount?: string
+  }>(),
+  {
+    width: '30vw',
+    title: '提示',
+    mount: 'body'
   }
-})
+)
 const emits = defineEmits(['close'])
 const visible = defineModel({
   default: false

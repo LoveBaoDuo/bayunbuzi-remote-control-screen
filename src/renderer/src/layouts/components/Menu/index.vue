@@ -5,7 +5,6 @@ import gsap from 'gsap'
 import Avatar from '/@/components/Avatar/index.vue'
 import { useRouterStore } from '../../../store/router'
 import { storeToRefs } from 'pinia'
-import { MenuType } from '../../type/MenuType'
 import { useUserStore } from '../../../store/user.store'
 import { toLogin } from '/@/utils'
 
@@ -31,9 +30,6 @@ const handleClickLogo = () => {
     delay: 0
   })
 }
-const handleClickMenu = (menu: MenuType) => {
-  // currentMenu.value = menu
-}
 const handleLogout = async () => {
   await userStore.logout()
   toLogin()
@@ -58,7 +54,6 @@ watchEffect(() => {
         :config="item"
         :open="isOpen"
         :active="currentMenu.name === item.name"
-        @click="handleClickMenu(item)"
       />
     </ul>
     <ul class="h-30">

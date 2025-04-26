@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import Nav from '../Nav/index.vue'
-import gsap from 'gsap'
+// import gsap from 'gsap'
 
 // const beforeEnter = (el) => {
 //   gsap.from(el, { opacity: 0, x: -100, duration: 0.5 })
