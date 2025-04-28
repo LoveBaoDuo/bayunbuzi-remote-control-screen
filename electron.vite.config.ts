@@ -56,14 +56,14 @@ export default defineConfig({
           changeOrigin: true,
           rewrite: (path) => path.replace(/^\/api/, '')
         },
-        '/api/ns': {
-          target: 'http://127.0.0.1:8099', // 目标服务器地址
-          ws: true, // 是否启用 WebSocket
-          changeOrigin: true, // 是否修改请求头中的 Origin 字段
-          rewrite: (path) => path.replace(/^\/api\/ns/, '')
-        },
+        // '/api/ns': {
+        //   target: 'http://127.0.0.1:8099', // 目标服务器地址
+        //   ws: true, // 是否启用 WebSocket
+        //   changeOrigin: true, // 是否修改请求头中的 Origin 字段
+        //   rewrite: (path) => path.replace(/^\/api\/ns/, '')
+        // },
         '/api': {
-          target: 'http://127.0.0.1:9999', // 目标服务器地址
+          target: 'http://159.75.188.129:9999', // 目标服务器地址
           ws: true, // 是否启用 WebSocket
           changeOrigin: true, // 是否修改请求头中的 Origin 字段
           rewrite: (path) => path.replace(/^\/api/, '')

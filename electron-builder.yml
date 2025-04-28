@@ -19,6 +19,8 @@ nsis:
   shortcutName: ${productName}
   uninstallDisplayName: ${productName}
   createDesktopShortcut: always
+  oneClick: false # 禁用一键安装（允许用户选择路径）
+  allowToChangeInstallationDirectory: true # 允许用户修改安装路径
   installerIcon: ./build/favicon.ico
   uninstallerIcon: ./build/favicon.ico
 mac:

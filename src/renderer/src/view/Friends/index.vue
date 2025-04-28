@@ -166,7 +166,7 @@ onDeactivated(() => {
               )
             "
           />
-          <el-scrollbar height="calc(100vh - 60px)">
+          <el-scrollbar  v-if="!searchOption.searchStr" height="calc(100vh - 60px)">
             <el-menu class="!border-none">
               <div
                 :class="{ 'border-b': menuList.length !== index + 1 }"
