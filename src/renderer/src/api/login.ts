@@ -1,6 +1,7 @@
 import request from '@renderer/utils/request'
 import { encryption } from '@renderer/utils'
 import { IpcEmitter } from '@electron-toolkit/typed-ipc/renderer'
+import { ResultType } from '/@/api/type'
 
 const emitter = new IpcEmitter()
 // 登录
@@ -91,7 +92,7 @@ export const logout = () => {
 /**
  * 注册用户
  */
-export const registerUser = (userInfo: object) => {
+export const registerUser = (userInfo: object): Promise<ResultType<any>> => {
   return request({
     url: '/admin/register/user',
     method: 'post',

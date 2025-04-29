@@ -14,7 +14,7 @@ const name = computed(() => {
   if (regex.test(props.nickname)) {
     return props.nickname.slice(0, 1)
   } else {
-    return props.nickname.slice(0, 1).toLocaleUpperCase()
+    return props.nickname.slice(0, 1)?.toLocaleUpperCase()
   }
 })
 </script>

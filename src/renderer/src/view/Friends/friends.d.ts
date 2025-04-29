@@ -4,6 +4,7 @@ export interface ContactChildrenType {
   avatar: string
   phone?: string
   userId?: string
+  friendId?: string
 }
 
 export interface ContactType {

@@ -10,7 +10,7 @@ const props = defineProps<{
 const route = useRouter()
 const useChat = useChatStore()
 const startChat = async () => {
-  const flag = await useChat.startChat(props.data.userId as string)
+  const flag = await useChat.startChat(props.data.friendId as string)
   if (flag) {
     route.push('/info')
   }

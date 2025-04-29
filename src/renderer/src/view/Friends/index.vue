@@ -37,16 +37,16 @@ const data: ContactType[] = [
       }
     ]
   },
-  {
-    group: '群聊',
-    type: 'GroupChatDetails',
-    children: [
-      {
-        title: 'aaa',
-        avatar: ''
-      }
-    ]
-  }
+  // {
+  //   group: '群聊',
+  //   type: 'GroupChatDetails',
+  //   children: [
+  //     {
+  //       title: 'aaa',
+  //       avatar: ''
+  //     }
+  //   ]
+  // }
 ]
 const menuList = computed(() => {
   const temp: any = []

@@ -61,10 +61,10 @@ const handleMenuSelect = (val) => {
         >
           <Avatar
             class="!h-8 !w-8 !leading-8 !ml-0"
-            :src="getChatName(chat).avatar"
-            :nickname="getChatName(chat).nickname"
+            :src="getChatName(chat)?.avatar"
+            :nickname="getChatName(chat)?.nickname"
           />
-          <span class="ml-3"> {{ getChatName(chat).nickname }} </span>
+          <span class="ml-3"> {{ getChatName(chat)?.nickname }} </span>
         </el-menu-item>
       </el-menu>
     </el-scrollbar>

@@ -4,6 +4,7 @@ import { checkAll } from '/@/utils/validator'
 import { registerUser } from '../../../api/login'
 import { Message } from '../../../../../main/messageBox'
 import Button from '/@/components/Button/index.vue'
+import { code } from '/@/config'
 // 组件内部状态
 const state = reactive({
   // 是否显示密码
@@ -47,17 +48,19 @@ const handleRegister = async () => {
   ) {
     state.usernameMessage = result.username
     state.passwordMessage = result.password
-    state.phoneMessage = result.password
+    state.phoneMessage = result.phone
     return
   }
   try {
     loading.value = true
-    await registerUser(state.ruleForm)
-    goLogin()
-    Message({
-      message: '注册成功',
-      type: 'success'
-    })
+    const res = await registerUser(state.ruleForm)
+    if (res.code === code.success) {
+      Message({
+        message: '注册成功',
+        type: 'success'
+      })
+      goLogin()
+    }
   } catch (e: any) {
     Message({
       message: '注册失败',

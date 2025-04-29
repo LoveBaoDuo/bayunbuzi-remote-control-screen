@@ -3,6 +3,7 @@ export interface ChatMessagePropDataType{
   message: string;
   createTime?: string;
   nickname: string;
+  username?: string;
   avatar: string;
   type: '0' | '1';
   isFriendMsg: boolean;

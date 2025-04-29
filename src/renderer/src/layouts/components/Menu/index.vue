@@ -16,7 +16,6 @@ userStore.initUserInfo()
 routerStore.setMenuList()
 const { menuList, currentMenu } = storeToRefs(routerStore)
 const { userInfo } = storeToRefs(userStore)
-
 const handleClickLogo = () => {
   isOpen.value = !isOpen.value
   let width = 80
@@ -58,7 +57,7 @@ watchEffect(() => {
     </ul>
     <ul class="h-30">
       <li class="flex items-center">
-        <Avatar :src="userInfo.avatar" :nickname="userInfo.name" />
+        <Avatar :src="userInfo.avatar" :nickname="userInfo.name || userInfo.username" />
         <transition name="fade">
           <span v-show="isOpen" class="flex-1 font-semibold text-sm truncate">{{
             userInfo.nickname

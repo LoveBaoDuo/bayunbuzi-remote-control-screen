@@ -22,7 +22,7 @@ withDefaults(
         <Avatar
           :src="data.avatar"
           class="!ml-0 !w-8 !h-8 !leading-8 text-sm"
-          :nickname="data.nickname"
+          :nickname="data?.nickname || data.username"
         />
         <div
           class="flex bg-white rounded-lg rounded-tl-none p-2 shadow flex-wrap"
@@ -47,7 +47,7 @@ withDefaults(
         <Avatar
           :src="useUser.userInfo.avatar"
           class="!ml-0 !w-8 !h-8 !leading-8 text-sm"
-          :nickname="useUser.userInfo.nickname"
+          :nickname="useUser.userInfo.nickname || useUser.userInfo.username"
         />
       </template>
     </div>

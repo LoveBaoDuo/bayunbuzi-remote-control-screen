@@ -128,6 +128,7 @@ const handleClick = () => {
         @input="handelInputEdit"
         @paste="handlePaste"
         @click="handleClick"
+        @keydown.enter="sendMessage"
       ></div>
     </el-scrollbar>
     <div class="flex justify-end" style="height: calc(100vh - 40px)">
