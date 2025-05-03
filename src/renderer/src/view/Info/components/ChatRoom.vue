@@ -36,7 +36,16 @@ const handleLoadingData = async () => {
 const scrollToBottom = async () => {
   await nextTick()
   scrollbarInstance.value?.scrollTo(0, 9999999999)
+  // setTimeout(() => {
+  //
+  // }, 200)
 }
+watch(
+  () => list.value,
+  () => {
+    scrollToBottom()
+  }
+)
 onMounted(() => {
   scrollToBottom()
 })

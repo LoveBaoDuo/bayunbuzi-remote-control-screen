@@ -58,7 +58,6 @@ export const useUserStore = defineStore('UserStore', {
         this.userInfo.name = res.data.sysUser.name
         this.userInfo.phone = res.data.sysUser.phone
         this.userInfo.userId = res.data.sysUser.userId
-        console.log(res)
         const userInfo = { ...this.userInfo }
         emitter.send('store_set', 'userInfo', userInfo)
         return true

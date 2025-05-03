@@ -4,6 +4,7 @@ import Empty from '/@/components/Empty/index.vue'
 import ByEmojiPicker from './ByEmojiPicker.vue'
 import Avatar from './Avatar/index.vue'
 import IntersectionLoader from './IntersectionLoader/index.vue'
+import MediaCallSocket from './MediaCallSocket.vue'
 
 export const setupApp = (app: App) => {
   app.component('Icon', Icon)
@@ -11,4 +12,5 @@ export const setupApp = (app: App) => {
   app.component('ByEmojiPicker', ByEmojiPicker)
   app.component('Avatar', Avatar)
   app.component('IntersectionLoader', IntersectionLoader)
+  app.component('MediaCallSocket', MediaCallSocket)
 }

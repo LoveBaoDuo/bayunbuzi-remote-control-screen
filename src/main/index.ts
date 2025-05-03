@@ -14,12 +14,26 @@ ipc.handle('open-custom-window', async (_, arg) => {
   wins.set(win.id, win)
   return win.id
 })
-ipc.on('close', (event, id: string) => {
-  if (id) {
-    const win = wins.get(id)
+ipc.handle('get-wins', () => {
+  return JSON.stringify(Array.from(wins.entries()))
+})
+ipc.on('close', (event, val: string) => {
+  if (val === 'all') {
+    for (const [key, win] of Array.from(wins.entries())) {
+      if (win) {
+        win.hide()
+        win.close()
+        wins.delete(key)
+      }
+    }
+    return
+  }
+  if (!!val) {
+    const win = wins.get(val)
     if (win) {
       win.hide()
       win.close()
+      wins.delete(val)
     }
     return
   }
@@ -27,6 +41,9 @@ ipc.on('close', (event, id: string) => {
   const window = BrowserWindow.fromWebContents(webContents) // 从 WebContents 获取 BrowserWindow 实例
   if (window) {
     window.hide()
+    if (wins.has(window.id)) {
+      wins.delete(window.id)
+    }
     window.close()
   }
 })

@@ -2,7 +2,7 @@
 import * as CryptoJS from 'crypto-js'
 import { IpcEmitter } from '@electron-toolkit/typed-ipc/renderer'
 import { pinyin } from 'pinyin-pro'
-import { minWindowsConfig, otherWindowsConfig } from '../config/windows.config'
+import { minWindowsConfig, otherWindowsConfig, videoWindowsConfig } from '../config/windows.config'
 
 const emitter = new IpcEmitter()
 
@@ -93,6 +93,19 @@ export const toLogin = async () => {
   })
   await emitter.invoke('open-custom-window', config)
   emitter.send('close')
+}
+export const existWind = async (winId: string) => {
+  const winArray = await emitter.invoke('get-wins')
+  const winMap = new Map(JSON.parse(winArray))
+  return winMap.has(winId)
+}
+export const toVdieo = async ({type}: any) => {
+  const config = JSON.stringify({
+    parent: true,
+    url: `/video?type=${type}`,
+    win: videoWindowsConfig
+  })
+  return await emitter.invoke('open-custom-window', config)
 }
 
 function getFirstLetter(str: string): string {

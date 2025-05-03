@@ -1,0 +1,179 @@
+import { useSendMediaInfo } from '/@/hooks/socket'
+
+const defaultOptions = {
+  iceServers: [
+    { urls: import.meta.env.VITE_API_STUN_URL }, // 默认STUN
+    // TURN 示例（需替换成你的Coturn服务器）
+    {
+      urls: import.meta.env.VITE_API_TURN_URL,
+      username: import.meta.env.VITE_API_TURN_USERNAME,
+      credential: import.meta.env.VITE_API_TURN_PASSWORD
+    }
+  ],
+  onRemoteStream: (stram: MediaStream) => {
+    console.log('Remote stream stream', stram)
+  },
+  onDataChannelMessage: (data: string) => {
+    console.log('Received data', data)
+  },
+  onConnectionStateChange: (state: string) => {
+    console.log('Received connection state', state)
+  },
+  onIceCandidate: (candidate: RTCIceCandidate) => {
+    console.log('Received ice candidate', candidate)
+  }
+}
+
+export interface WebRTCOptionType {
+  iceServers?: any[]
+  onRemoteStream?: (stram: MediaStream) => any
+  onDataChannelMessage?: (data: any) => any
+  onConnectionStateChange?: (
+    state: 'closed' | 'connected' | 'connecting' | 'disconnected' | 'failed' | 'new'
+  ) => any
+  onIceCandidate?: (candidate: RTCIceCandidate) => any
+}
+
+class WebRTCConnection {
+  //  WebRTC 连接实例
+  private peerConnection: RTCPeerConnection | null = null
+  private options: any
+  // 远程流
+  private remoteStream: MediaStream | null = null
+  // 本地流
+  private localStream: MediaStream | null = null
+  // 数据传输渠道
+  private dataChannel: RTCDataChannel | null = null
+
+  constructor(options?: WebRTCOptionType) {
+    if (options === null) {
+      this.options = { ...defaultOptions }
+    } else {
+      this.options = options
+    }
+  }
+  get localStreamData() {
+    return this.localStream
+  }
+  // 初始化 PeerConnection
+  async init(initiator = false) {
+    this.peerConnection = new RTCPeerConnection({
+      iceServers: this.options.iceServers
+    })
+
+    // 当接收到新的 ICE 候选者时触发。
+    this.peerConnection.onicecandidate = (event) => {
+      if (event.candidate) {
+        this.sendSignalingMessage({ type: 'ice-candidate', candidate: event.candidate })
+        this.options.onIceCandidate(event.candidate)
+      }
+    }
+
+    // 监听远程流
+    this.peerConnection.ontrack = (event) => {
+      this.remoteStream = event.streams[0]
+      this.options.onRemoteStream(this.remoteStream)
+    }
+
+    // 监听连接状态
+    this.peerConnection.onconnectionstatechange = () => {
+      // connectionState:  new（新建）、connecting（连接中）、connected（已连接）、disconnected（已断开连接）、failed（连接失败）或 closed（已关闭）
+      this.options.onConnectionStateChange(this.peerConnection?.connectionState)
+    }
+
+    // 如果是发起方，创建 DataChannel（可选）
+    if (initiator) {
+      // 创建数据传输渠道
+      this.dataChannel = this.peerConnection?.createDataChannel('chat')
+      this.dataChannel.onmessage = (event) => {
+        this.options.onDataChannelMessage(event.data)
+      }
+    } else {
+      this.peerConnection.ondatachannel = (event) => {
+        this.dataChannel = event.channel
+        this.dataChannel.onmessage = (event) => {
+          this.options.onDataChannelMessage(event.data)
+        }
+      }
+    }
+  }
+
+  // 获取本地媒体流（摄像头+麦克风）
+  async getLocalStream() {
+    this.localStream = await navigator.mediaDevices.getUserMedia({
+      audio: true,
+      video: true
+    })
+    return this.localStream
+  }
+
+  // 添加本地流到 PeerConnection
+  async addLocalStream() {
+    if (!this.localStream) await this.getLocalStream()
+    this.localStream?.getTracks().forEach((track) => {
+      this.peerConnection?.addTrack(track, this.localStream as MediaStream)
+    })
+  }
+
+  // 创建 Offer（发起方调用） 媒体协商
+  async createOffer() {
+    await this.addLocalStream()
+    const offer = await this.peerConnection?.createOffer()
+    await this.peerConnection?.setLocalDescription(offer)
+    this.sendSignalingMessage({ type: 'offer', offer })
+  }
+
+  // 处理 Answer（接收方调用）媒体协商
+  async handleAnswer(answer) {
+    await this.peerConnection?.setRemoteDescription(answer)
+  }
+
+  // 处理 Offer（接收方调用）
+  async handleOffer(offer) {
+    await this.addLocalStream()
+    await this.peerConnection?.setRemoteDescription(offer)
+    const answer = await this.peerConnection?.createAnswer()
+    await this.peerConnection?.setLocalDescription(answer)
+    this.sendSignalingMessage({ type: 'answer', answer })
+  }
+
+  // 处理 ICE Candidate 每个ICE Candidate代表一个可能的通信路径（如本地IP、公网IP、中继服务器地址等），包含协议（UDP/TCP）、IP地址、端口和类型（主机/反射/中继候选）。
+  async handleIceCandidate(candidate) {
+    await this.peerConnection?.addIceCandidate(candidate)
+  }
+
+  // 发送信令消息（WebSocket）
+  sendSignalingMessage(message: any) {
+    useSendMediaInfo({ roomKey: 'xx', data: message })
+  }
+
+  // 处理信令消息（WebSocket）
+  handleSignalingMessage(message: any) {
+    switch (message.type) {
+      case 'offer':
+        this.handleOffer(message.offer)
+        break
+      case 'answer':
+        this.handleAnswer(message.answer)
+        break
+      case 'ice-candidate':
+        this.handleIceCandidate(message.candidate)
+        break
+      default:
+        console.warn('Unknown message type:', message.type)
+    }
+  }
+
+  // 关闭连接
+  close() {
+    if (this.peerConnection) {
+      this.peerConnection.close()
+      this.peerConnection = null
+    }
+    if (this.localStream) {
+      this.localStream.getTracks().forEach((track) => track.stop())
+    }
+  }
+}
+
+export default WebRTCConnection

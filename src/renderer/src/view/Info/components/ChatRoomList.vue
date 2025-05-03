@@ -27,6 +27,11 @@ const getChatName = (chat) => {
   }
 }
 const handleClick = (chat: any) => {
+  if (chat === currentFriend.value) {
+    return
+  } else {
+    useMessage.list = []
+  }
   useChat.setCurrentInfo(chat)
   if (currentFriend.value && useMessage.list.length === 0) {
     useMessage.nextCursor = null
@@ -37,7 +42,6 @@ const handleInput = () => {}
 const handleMenuSelect = (val) => {
   currentActionMenu.value = val
 }
-
 </script>
 
 <template>

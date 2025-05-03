@@ -5,6 +5,7 @@ import Main from './components/Main/index.vue'
 
 <template>
   <div class="flex text-gray-950 w-full h-full">
+    <MediaCallSocket />
     <aside class="bg-white h-full relative shadow-xl">
       <Menu />
     </aside>

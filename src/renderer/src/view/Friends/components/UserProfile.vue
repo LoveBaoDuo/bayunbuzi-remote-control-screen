@@ -3,17 +3,33 @@ import Avatar from '/@/components/Avatar/index.vue'
 import Icon from '@renderer/components/Icon.vue'
 import { useChatStore } from '/@/store/chat.store'
 import { ContactChildrenType } from '/@/view/Friends/friends'
+import { existWind } from '@renderer/utils/index'
+import { useStartCallMedia } from '/@/hooks/socket'
+import { useUserStore } from '/@/store/user.store'
 
 const props = defineProps<{
   data: ContactChildrenType
 }>()
 const route = useRouter()
 const useChat = useChatStore()
+const useUser = useUserStore()
 const startChat = async () => {
-  const flag = await useChat.startChat(props.data.friendId as string)
+  const flag = await useChat.startChat(props.data.userId as string)
   if (flag) {
     route.push('/info')
   }
+}
+const openVideo = async () => {
+  const sendUserId = useUser.getUserId
+  const receiverId = sendUserId === props.data.userId ? props.data.friendId : props.data.userId
+  localStorage.setItem('MEDIA_RECEIVER_INFO', JSON.stringify(props.data))
+  useStartCallMedia({
+    type: 'sender',
+    media: 'video',
+    sendUserId: sendUserId,
+    receiverId: receiverId as string,
+    senderInfo: useUser.userInfo,
+  })
 }
 </script>
 <template>
@@ -82,7 +98,10 @@ const startChat = async () => {
           <Icon color="#576b95" name="comment" :size="20" />
           <span>发消息</span>
         </button>
-        <button class="flex flex-col items-center justify-center mx-4 text-[#576b95]">
+        <button
+          class="flex flex-col items-center justify-center mx-4 text-[#576b95]"
+          @click="openVideo"
+        >
           <Icon color="#576b95" name="phone" :size="20" />
           <span>语音聊天</span>
         </button>

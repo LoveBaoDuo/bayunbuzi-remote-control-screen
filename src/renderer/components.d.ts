@@ -23,6 +23,7 @@ declare module 'vue' {
     Icon: typeof import('./src/components/Icon.vue')['default']
     IntersectionLoader: typeof import('./src/components/IntersectionLoader/index.vue')['default']
     Loading: typeof import('./src/components/Loading/index.vue')['default']
+    MediaCallSocket: typeof import('./src/components/MediaCallSocket.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     Search: typeof import('./src/components/Search/index.vue')['default']

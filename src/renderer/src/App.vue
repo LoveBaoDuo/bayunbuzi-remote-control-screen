@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { IpcListener } from '@electron-toolkit/typed-ipc/renderer'
-
 const ipc = new IpcListener()
 const loadingOpiton = ref<{ loading: boolean; loadingText: string }>({
   loading: false,

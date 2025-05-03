@@ -22,7 +22,7 @@ import Nav from '../Nav/index.vue'
 <template>
   <div class="h-full pl-2 relative rounded-l-lg">
     <nav class="h-6 absolute right-0 z-[9999] no-drag">
-      <Nav color="#232946FF" />
+      <Nav color="#232946FF" close-option="all" />
     </nav>
     <section class="bg-white overflow-hidden h-full">
       <router-view v-slot="{ Component }">
