@@ -3,11 +3,11 @@ import { IpcListener } from '@electron-toolkit/typed-ipc/renderer'
 const ipc = new IpcListener()
 const loadingOpiton = ref<{ loading: boolean; loadingText: string }>({
   loading: false,
-  loadingText: '加载中...'
+  loadingText: '正在更新...'
 })
 ipc.on('download-progress', (_, data) => {
-  loadingOpiton.value.loading = true
   loadingOpiton.value.loadingText = '正在下载中' + data.toFixed(0) + '%...'
+  loadingOpiton.value.loading = true
 })
 </script>
 

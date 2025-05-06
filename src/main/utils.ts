@@ -1,5 +1,5 @@
 // main/utils.ts
-import { BrowserWindow } from 'electron'
+import { BrowserWindow, screen } from 'electron'
 import path, { join } from 'path'
 import icon from '../../resources/icon.png?asset'
 import { is } from '@electron-toolkit/utils'
@@ -19,9 +19,14 @@ interface WinType {
 export interface CustomWindowOptions {
   url: string
   parent: boolean
+  autoSize?: boolean
   win: WinType
 }
 
+export const getScreenSize = () => {
+  const primaryDisplay = screen.getPrimaryDisplay()
+  return primaryDisplay.workAreaSize
+}
 export const createCustomWindow = async (
   options: CustomWindowOptions,
   parent: BrowserWindow
@@ -43,6 +48,11 @@ export const createCustomWindow = async (
   const config = { ...defaultValue, ...options.win }
   if (options.parent) {
     config.parent = parent
+  }
+  if (options.autoSize) {
+    const { width, height } = getScreenSize()
+    config.width = width * 0.6
+    config.height = height * 0.6
   }
   const customWindow = new BrowserWindow(config)
   customWindow.once('ready-to-show', () => {

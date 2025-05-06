@@ -14,11 +14,19 @@ const props = defineProps({
   },
   closeOption: {
     type: String,
-    default: '',
+    default: ''
   }
 })
 const isFullScreen = ref(false)
+const emits = defineEmits<{
+  (e: 'close'): void
+}>()
 const handleCloseApp = () => {
+  emits('close')
+  emitter.send('close', props.closeOption)
+}
+const close = () => {
+  console.log(111)
   emitter.send('close', props.closeOption)
 }
 const handleToggleFullScreen = () => {
@@ -28,6 +36,9 @@ const handleToggleFullScreen = () => {
 const handleMinimize = () => {
   emitter.send('minimize')
 }
+defineExpose({
+  close
+})
 </script>
 
 <template>

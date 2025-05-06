@@ -99,10 +99,11 @@ export const existWind = async (winId: string) => {
   const winMap = new Map(JSON.parse(winArray))
   return winMap.has(winId)
 }
-export const toVdieo = async ({type}: any) => {
+export const toVdieo = async ({ type }: any) => {
   const config = JSON.stringify({
     parent: true,
     url: `/video?type=${type}`,
+    autoSize: true,
     win: videoWindowsConfig
   })
   return await emitter.invoke('open-custom-window', config)

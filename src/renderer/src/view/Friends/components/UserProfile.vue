@@ -3,7 +3,6 @@ import Avatar from '/@/components/Avatar/index.vue'
 import Icon from '@renderer/components/Icon.vue'
 import { useChatStore } from '/@/store/chat.store'
 import { ContactChildrenType } from '/@/view/Friends/friends'
-import { existWind } from '@renderer/utils/index'
 import { useStartCallMedia } from '/@/hooks/socket'
 import { useUserStore } from '/@/store/user.store'
 
@@ -100,12 +99,12 @@ const openVideo = async () => {
         </button>
         <button
           class="flex flex-col items-center justify-center mx-4 text-[#576b95]"
-          @click="openVideo"
+
         >
           <Icon color="#576b95" name="phone" :size="20" />
           <span>语音聊天</span>
         </button>
-        <button class="flex flex-col items-center justify-center mx-4 text-[#576b95]">
+        <button class="flex flex-col items-center justify-center mx-4 text-[#576b95]"  @click="openVideo">
           <Icon color="#576b95" name="video" :size="20" />
           <span>视频聊天</span>
         </button>

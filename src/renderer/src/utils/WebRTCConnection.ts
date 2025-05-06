@@ -1,6 +1,7 @@
 import { useSendMediaInfo } from '/@/hooks/socket'
 
 const defaultOptions = {
+  roomKey: '',
   iceServers: [
     { urls: import.meta.env.VITE_API_STUN_URL }, // 默认STUN
     // TURN 示例（需替换成你的Coturn服务器）
@@ -11,33 +12,44 @@ const defaultOptions = {
     }
   ],
   onRemoteStream: (stram: MediaStream) => {
-    console.log('Remote stream stream', stram)
+    console.log('远程流', stram)
+  },
+  onLocalStream: (stram: MediaStream) => {
+    console.log('本地流', stram)
   },
   onDataChannelMessage: (data: string) => {
-    console.log('Received data', data)
+    console.log('数据通道信息', data)
   },
   onConnectionStateChange: (state: string) => {
-    console.log('Received connection state', state)
+    console.log('链接状态', state)
   },
   onIceCandidate: (candidate: RTCIceCandidate) => {
-    console.log('Received ice candidate', candidate)
+    console.log('ICE候选信息', candidate)
   }
 }
+// new（新建）、connecting（连接中）、connected（已连接）、disconnected（已断开连接）、failed（连接失败）或 closed（已关闭）
+export type ConnectionState =
+  | 'closed'
+  | 'connected'
+  | 'connecting'
+  | 'disconnected'
+  | 'failed'
+  | 'new'
 
 export interface WebRTCOptionType {
+  roomKey?: string
   iceServers?: any[]
   onRemoteStream?: (stram: MediaStream) => any
+  onLocalStream?: (stram: MediaStream) => any
   onDataChannelMessage?: (data: any) => any
-  onConnectionStateChange?: (
-    state: 'closed' | 'connected' | 'connecting' | 'disconnected' | 'failed' | 'new'
-  ) => any
+  onConnectionStateChange?: (state: ConnectionState) => any
   onIceCandidate?: (candidate: RTCIceCandidate) => any
 }
 
 class WebRTCConnection {
   //  WebRTC 连接实例
   private peerConnection: RTCPeerConnection | null = null
-  private options: any
+  private readonly options: any
   // 远程流
   private remoteStream: MediaStream | null = null
   // 本地流
@@ -49,12 +61,10 @@ class WebRTCConnection {
     if (options === null) {
       this.options = { ...defaultOptions }
     } else {
-      this.options = options
+      this.options = { ...defaultOptions, ...options }
     }
   }
-  get localStreamData() {
-    return this.localStream
-  }
+
   // 初始化 PeerConnection
   async init(initiator = false) {
     this.peerConnection = new RTCPeerConnection({
@@ -72,6 +82,7 @@ class WebRTCConnection {
     // 监听远程流
     this.peerConnection.ontrack = (event) => {
       this.remoteStream = event.streams[0]
+      console.log(event)
       this.options.onRemoteStream(this.remoteStream)
     }
 
@@ -100,10 +111,19 @@ class WebRTCConnection {
 
   // 获取本地媒体流（摄像头+麦克风）
   async getLocalStream() {
-    this.localStream = await navigator.mediaDevices.getUserMedia({
-      audio: true,
-      video: true
-    })
+    const enumerator = await navigator.mediaDevices.enumerateDevices()
+    const hasAudio = enumerator.some((d) => d.kind === 'audioinput')
+    const hasVideo = enumerator.some((d) => d.kind === 'videoinput')
+
+    // 根据设备情况请求媒体流
+    const constraints = {
+      audio: hasAudio,
+      video: hasVideo
+    }
+    this.localStream = await navigator.mediaDevices.getUserMedia(constraints)
+    console.log(this.localStream)
+    // 添加本地流
+    this.options.onLocalStream(this.localStream)
     return this.localStream
   }
 
@@ -118,7 +138,10 @@ class WebRTCConnection {
   // 创建 Offer（发起方调用） 媒体协商
   async createOffer() {
     await this.addLocalStream()
-    const offer = await this.peerConnection?.createOffer()
+    const offer = await this.peerConnection?.createOffer({
+      offerToReceiveAudio: true,
+      offerToReceiveVideo: true  // 关键设置
+    })
     await this.peerConnection?.setLocalDescription(offer)
     this.sendSignalingMessage({ type: 'offer', offer })
   }
@@ -139,12 +162,14 @@ class WebRTCConnection {
 
   // 处理 ICE Candidate 每个ICE Candidate代表一个可能的通信路径（如本地IP、公网IP、中继服务器地址等），包含协议（UDP/TCP）、IP地址、端口和类型（主机/反射/中继候选）。
   async handleIceCandidate(candidate) {
-    await this.peerConnection?.addIceCandidate(candidate)
+    if (candidate) {
+      await this.peerConnection?.addIceCandidate(candidate)
+    }
   }
 
   // 发送信令消息（WebSocket）
   sendSignalingMessage(message: any) {
-    useSendMediaInfo({ roomKey: 'xx', data: message })
+    useSendMediaInfo({ roomKey: this.options.roomKey, data: message })
   }
 
   // 处理信令消息（WebSocket）
@@ -159,6 +184,9 @@ class WebRTCConnection {
       case 'ice-candidate':
         this.handleIceCandidate(message.candidate)
         break
+      case 'close':
+        this.close()
+        break
       default:
         console.warn('Unknown message type:', message.type)
     }
@@ -172,6 +200,9 @@ class WebRTCConnection {
     }
     if (this.localStream) {
       this.localStream.getTracks().forEach((track) => track.stop())
+    }
+    if (this.remoteStream) {
+      this.remoteStream.getTracks().forEach((track) => track?.stop())
     }
   }
 }

@@ -18,6 +18,7 @@ ipc.handle('get-wins', () => {
   return JSON.stringify(Array.from(wins.entries()))
 })
 ipc.on('close', (event, val: string) => {
+  console.log(111)
   if (val === 'all') {
     for (const [key, win] of Array.from(wins.entries())) {
       if (win) {
@@ -37,6 +38,7 @@ ipc.on('close', (event, val: string) => {
     }
     return
   }
+
   const webContents = event.sender // 获取 WebContents 对象
   const window = BrowserWindow.fromWebContents(webContents) // 从 WebContents 获取 BrowserWindow 实例
   if (window) {
