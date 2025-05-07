@@ -27,10 +27,9 @@ export const useChatStore = defineStore('ChatStore', {
       try {
         const { userId } = await userUserInfo()
         this.userId = userId
-        await startChatApi({ friendId: friendId, userId })
-        return true
+        return await startChatApi({ friendId: friendId, userId })
       } catch (e) {
-        return false
+        return null
       }
     },
     async getChatRoomList(userId: string) {
@@ -44,8 +43,14 @@ export const useChatStore = defineStore('ChatStore', {
         return true
       } catch (e) {
         return false
-      }finally {
+      } finally {
         this.chatLoading = false
+      }
+    },
+    setCurrentChatByCode(code: string) {
+      const currentChat = this.chatList.filter((item) => item.code === code)
+      if (currentChat) {
+        this.setCurrentInfo(currentChat as any)
       }
     }
   }

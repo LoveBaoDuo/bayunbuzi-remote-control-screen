@@ -6,6 +6,7 @@ import { useChatStore } from '/@/store/chat.store'
 import { storeToRefs } from 'pinia'
 import { useMessageStore } from '/@/store/message'
 
+const route = useRoute()
 const useChat = useChatStore()
 const useMessage = useMessageStore()
 const { chatList, userId, currentFriend, chatLoading } = storeToRefs(useChat)
@@ -42,6 +43,17 @@ const handleInput = () => {}
 const handleMenuSelect = (val) => {
   currentActionMenu.value = val
 }
+const init = async () => {
+  if (route.query.code) {
+    const currentChat = chatList.value.find((item) => item.code === route.query.code)
+    if (currentChat) {
+      currentActionMenu.value = route.query.code as  string
+      handleClick(currentChat)
+    }
+  }
+}
+onMounted(init)
+onActivated(init)
 </script>
 
 <template>
@@ -55,12 +67,12 @@ const handleMenuSelect = (val) => {
       />
     </div>
     <el-scrollbar v-loading="chatLoading" height="calc(100vh - 60px)">
-      <el-menu class="!border-none" active-background-color="#000" @select="handleMenuSelect">
+      <el-menu class="!border-none" :default-active="currentActionMenu" active-background-color="#000" @select="handleMenuSelect">
         <el-menu-item
           v-for="chat in chatList"
           :key="chat.id"
-          :index="chat.id"
-          :class="['!px-2', currentActionMenu === chat.id ? 'by-menu-active' : '']"
+          :index="chat.code"
+          :class="['!px-2', currentActionMenu === chat.code ? 'by-menu-active' : '']"
           @click="handleClick(chat)"
         >
           <Avatar

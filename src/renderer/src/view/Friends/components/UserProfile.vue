@@ -13,9 +13,10 @@ const route = useRouter()
 const useChat = useChatStore()
 const useUser = useUserStore()
 const startChat = async () => {
-  const flag = await useChat.startChat(props.data.userId as string)
-  if (flag) {
-    route.push('/info')
+  const friendId = useUser.getUserId === props.data.userId ? props.data.friendId : props.data.userId
+  const res = await useChat.startChat(friendId as string)
+  if (res) {
+    await route.push(`/info?code=${res.data.code}`)
   }
 }
 const openVideo = async () => {
@@ -27,7 +28,7 @@ const openVideo = async () => {
     media: 'video',
     sendUserId: sendUserId,
     receiverId: receiverId as string,
-    senderInfo: useUser.userInfo,
+    senderInfo: useUser.userInfo
   })
 }
 </script>
@@ -97,14 +98,14 @@ const openVideo = async () => {
           <Icon color="#576b95" name="comment" :size="20" />
           <span>发消息</span>
         </button>
-        <button
-          class="flex flex-col items-center justify-center mx-4 text-[#576b95]"
-
-        >
+        <button class="flex flex-col items-center justify-center mx-4 text-[#576b95]">
           <Icon color="#576b95" name="phone" :size="20" />
           <span>语音聊天</span>
         </button>
-        <button class="flex flex-col items-center justify-center mx-4 text-[#576b95]"  @click="openVideo">
+        <button
+          class="flex flex-col items-center justify-center mx-4 text-[#576b95]"
+          @click="openVideo"
+        >
           <Icon color="#576b95" name="video" :size="20" />
           <span>视频聊天</span>
         </button>

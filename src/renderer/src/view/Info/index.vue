@@ -1,13 +1,15 @@
 <script setup lang="ts">
 import MainContainer from '/@/layouts/components/MainContainer.vue'
+import { useChatStore } from '/@/store/chat.store'
+import { useUserStore } from '/@/store/user.store'
+
 const ChatRoomList = defineAsyncComponent(() => import('/@/view/Info/components/ChatRoomList.vue'))
 const ChatRoom = defineAsyncComponent(() => import('/@/view/Info/components/ChatRoom.vue'))
-import {useChatStore} from "/@/store/chat.store";
-import {useUserStore} from "/@/store/user.store";
+
 const useChat = useChatStore()
 const useUser = useUserStore()
-onActivated(() => {
-  useChat.getChatRoomList(useUser.userInfo.userId)
+onActivated(async () => {
+  await useChat.getChatRoomList(useUser.userInfo.userId)
 })
 </script>
 
@@ -18,7 +20,7 @@ onActivated(() => {
         <ChatRoomList />
       </template>
       <template #container>
-        <ChatRoom v-if="useChat.currentChat"  room-id=""/>
+        <ChatRoom v-if="useChat.currentChat" room-id="" />
       </template>
     </MainContainer>
   </div>

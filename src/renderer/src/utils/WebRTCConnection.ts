@@ -25,6 +25,9 @@ const defaultOptions = {
   },
   onIceCandidate: (candidate: RTCIceCandidate) => {
     console.log('ICE候选信息', candidate)
+  },
+  onGetMediaError: (str: string) => {
+    console.log(str)
   }
 }
 // new（新建）、connecting（连接中）、connected（已连接）、disconnected（已断开连接）、failed（连接失败）或 closed（已关闭）
@@ -44,6 +47,7 @@ export interface WebRTCOptionType {
   onDataChannelMessage?: (data: any) => any
   onConnectionStateChange?: (state: ConnectionState) => any
   onIceCandidate?: (candidate: RTCIceCandidate) => any
+  onGetMediaError?: (str: string) => any
 }
 
 class WebRTCConnection {
@@ -114,7 +118,10 @@ class WebRTCConnection {
     const enumerator = await navigator.mediaDevices.enumerateDevices()
     const hasAudio = enumerator.some((d) => d.kind === 'audioinput')
     const hasVideo = enumerator.some((d) => d.kind === 'videoinput')
-
+    if (!hasAudio && !hasVideo) {
+      this.options.onGetMediaError('未找到摄像头或者麦克风，请检查是否存在设备或者设备被占用')
+      return null
+    }
     // 根据设备情况请求媒体流
     const constraints = {
       audio: hasAudio,
@@ -140,7 +147,7 @@ class WebRTCConnection {
     await this.addLocalStream()
     const offer = await this.peerConnection?.createOffer({
       offerToReceiveAudio: true,
-      offerToReceiveVideo: true  // 关键设置
+      offerToReceiveVideo: true // 关键设置
     })
     await this.peerConnection?.setLocalDescription(offer)
     this.sendSignalingMessage({ type: 'offer', offer })

@@ -46,6 +46,13 @@ watch(
     scrollToBottom()
   }
 )
+watch(
+  () => currentFriend.value,
+  () => {
+    disconnect()
+    connect()
+  }
+)
 onMounted(() => {
   scrollToBottom()
 })
@@ -55,7 +62,6 @@ onActivated(() => {
 })
 onDeactivated(() => {
   disconnect()
-  // useMessage.clear()
 })
 </script>
 

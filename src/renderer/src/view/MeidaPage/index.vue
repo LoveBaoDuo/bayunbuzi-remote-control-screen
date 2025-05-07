@@ -14,6 +14,7 @@ const receiveStatus = ref(false)
 const connectionState = ref<ConnectionState>('new')
 const useUser = useUserStore()
 useUser.initUserInfo()
+const equipmentError = ref('')
 const videoInstance = ref()
 const localVideoInstance = ref()
 const navInstance = ref()
@@ -97,13 +98,17 @@ const linkSignalingServer = () => {
 const handleReceiveCommunication = () => {
   linkSignalingServer()
 }
+const handleGetMediaError = (error: any) => {
+  equipmentError.value = error
+}
 const mediaInit = async () => {
   // 实例化webRtc对象
   rtc = new WebRTCConnection({
     roomKey: currentUserInfo.value.roomKey,
     onRemoteStream: handleRemoteStram,
     onLocalStream: handleLocalStream,
-    onConnectionStateChange: handleConnectionStateChange
+    onConnectionStateChange: handleConnectionStateChange,
+    onGetMediaError: handleGetMediaError
   })
   if (type.value === 'sender') {
     receiveStatus.value = true
@@ -152,43 +157,46 @@ onUnmounted(() => {
           <p v-else class="text-center">邀请你视频通话...</p>
         </div>
       </div>
-      <div class="flex justify-center gap-5">
-        <div class="flex flex-col items-center no-drag cursor-pointer">
-          <div
-            class="w-12 flex items-center justify-center bg-[#363534] rounded-full h-12 items-center space-x-3"
-          >
-            <Icon class="text-white" :size="20" name="mic" />
+      <div>
+        <p class="text-center mb-2" v-if="equipmentError">{{equipmentError}}</p>
+        <div class="flex justify-center gap-5">
+          <div class="flex flex-col items-center no-drag cursor-pointer">
+            <div
+              class="w-12 flex items-center justify-center bg-[#363534] rounded-full h-12 items-center space-x-3"
+            >
+              <Icon class="text-white" :size="20" name="mic" />
+            </div>
           </div>
-        </div>
-        <div
-          v-if="receiveStatus"
-          class="flex flex-col items-center no-drag cursor-pointer"
-          @click="handleClosed"
-        >
           <div
-            class="w-12 flex items-center justify-center bg-red-600 rounded-full h-12 items-center space-x-3"
+            v-if="receiveStatus"
+            class="flex flex-col items-center no-drag cursor-pointer"
+            @click="handleClosed"
           >
-            <Icon class="text-white" :size="20" name="phone-missed" />
+            <div
+              class="w-12 flex items-center justify-center bg-red-600 rounded-full h-12 items-center space-x-3"
+            >
+              <Icon class="text-white" :size="20" name="phone-missed" />
+            </div>
+            挂断
           </div>
-          挂断
-        </div>
-        <div
-          v-else
-          class="flex flex-col items-center no-drag cursor-pointer"
-          @click="handleReceiveCommunication"
-        >
           <div
-            class="w-12 flex items-center justify-center bg-green-600 rounded-full h-12 items-center space-x-3"
+            v-else
+            class="flex flex-col items-center no-drag cursor-pointer"
+            @click="handleReceiveCommunication"
           >
-            <Icon class="text-white" :size="20" name="phone-call" />
+            <div
+              class="w-12 flex items-center justify-center bg-green-600 rounded-full h-12 items-center space-x-3"
+            >
+              <Icon class="text-white" :size="20" name="phone-call" />
+            </div>
+            接听
           </div>
-          接听
-        </div>
-        <div class="flex flex-col items-center no-drag cursor-pointer">
-          <div
-            class="w-12 flex items-center justify-center bg-[#363534] rounded-full h-12 items-center space-x-3"
-          >
-            <Icon class="text-white" :size="20" name="video" />
+          <div class="flex flex-col items-center no-drag cursor-pointer">
+            <div
+              class="w-12 flex items-center justify-center bg-[#363534] rounded-full h-12 items-center space-x-3"
+            >
+              <Icon class="text-white" :size="20" name="video" />
+            </div>
           </div>
         </div>
       </div>
