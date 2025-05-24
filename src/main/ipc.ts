@@ -1,6 +1,8 @@
 import { IpcListener, IpcEmitter } from '@electron-toolkit/typed-ipc/main'
 import ElectronStore from 'electron-store'
 import { logger } from './winston'
+import { getDeviceUUID } from './deviceInfo'
+
 const store = new ElectronStore()
 export const ipc = new IpcListener()
 export const emitter = new IpcEmitter()
@@ -14,6 +16,9 @@ ipc.on('store_set', (_, key, data) => {
 ipc.handle('store_get', (_, key) => {
   // @ts-ignore
   return store.get(key)
+})
+ipc.handle('device_uuid', async () => {
+  return await getDeviceUUID()
 })
 // 删除应用数据
 ipc.on('store_del', (_, key) => {

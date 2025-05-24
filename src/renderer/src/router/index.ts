@@ -2,7 +2,7 @@
  * createRouter 创建路由实例的方法
  * createWebHashHistory 路由模式为hash createWebHistory 是路由的 history 模式
  */
-import { createRouter,createWebHashHistory, RouteRecordRaw } from 'vue-router'
+import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router'
 
 // 声明路由配置
 export const currentRoutes: RouteRecordRaw[] = [
@@ -51,7 +51,7 @@ export const currentRoutes: RouteRecordRaw[] = [
           icon: 'setting',
           hidden: false
         }
-      },
+      }
     ]
   },
   {
@@ -69,6 +69,12 @@ export const currentRoutes: RouteRecordRaw[] = [
     component: () => import('/@/view/MeidaPage/index.vue'),
     name: 'Video'
   },
+  {
+    path: '/remote',
+    // @ts-ignore
+    component: () => import('/@/view/Remote/index.vue'),
+    name: 'Remote'
+  }
 ]
 
 // 导出 router

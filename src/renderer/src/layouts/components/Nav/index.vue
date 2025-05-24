@@ -26,7 +26,6 @@ const handleCloseApp = () => {
   emitter.send('close', props.closeOption)
 }
 const close = () => {
-  console.log(111)
   emitter.send('close', props.closeOption)
 }
 const handleToggleFullScreen = () => {

@@ -2,7 +2,13 @@
 import * as CryptoJS from 'crypto-js'
 import { IpcEmitter } from '@electron-toolkit/typed-ipc/renderer'
 import { pinyin } from 'pinyin-pro'
-import { minWindowsConfig, otherWindowsConfig, videoWindowsConfig } from '../config/windows.config'
+import {
+  minWindowsConfig,
+  otherWindowsConfig,
+  remoteReceiverWindowsConfig,
+  remoteSenderWindowsConfig,
+  videoWindowsConfig
+} from '../config/windows.config'
 
 const emitter = new IpcEmitter()
 
@@ -99,15 +105,6 @@ export const existWind = async (winId: string) => {
   const winMap = new Map(JSON.parse(winArray))
   return winMap.has(winId)
 }
-export const toVdieo = async ({ type }: any) => {
-  const config = JSON.stringify({
-    parent: true,
-    url: `/video?type=${type}`,
-    autoSize: true,
-    win: videoWindowsConfig
-  })
-  return await emitter.invoke('open-custom-window', config)
-}
 
 function getFirstLetter(str: string): string {
   if (!str?.trim()) return '#'
@@ -161,4 +158,30 @@ export function groupUsersByFirstLetter(users: any[]) {
   })
 
   return { groupOrder, groups }
+}
+
+export const getDeviceUUID = async () => {
+  return await emitter.invoke('device_uuid')
+}
+export const toVdieo = async ({ type }: any) => {
+  const config = JSON.stringify({
+    parent: true,
+    url: `/video?type=${type}`,
+    autoSize: true,
+    win: videoWindowsConfig
+  })
+  return await emitter.invoke('open-custom-window', config)
+}
+export const toRemote = async ({ type }: any) => {
+  const windowsConfig = type === 'sender' ? remoteSenderWindowsConfig : remoteReceiverWindowsConfig
+  const config = {
+    parent: true,
+    url: `/remote?type=${type}`,
+    autoSize: type === 'sender',
+    position: type === 'receiver' ? 'right-bottom' : '',
+    win: windowsConfig
+  }
+
+  const configStr = JSON.stringify(config)
+  return await emitter.invoke('open-custom-window', configStr)
 }

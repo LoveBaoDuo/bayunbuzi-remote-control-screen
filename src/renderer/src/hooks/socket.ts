@@ -20,7 +20,7 @@ const socketConnect = () => {
     })
   })
 }
-
+// 基础链接成功回调
 const baseConnect = async (callBack: () => any) => {
   if (socket && socket.connected) {
     callBack()
@@ -34,6 +34,7 @@ const baseConnect = async (callBack: () => any) => {
   }
 }
 
+// 聊天socket
 export const useSocket = ({ roomId, onMessage }: MessageType) => {
   const handleJoinStatus = () => {
     console.log('join success')
@@ -72,13 +73,13 @@ export interface CallPayloadType {
   type: 'sender' | 'receiver'
 }
 
-// 发起呼叫
+// 视频-发起呼叫
 export const useStartCallMedia = (callPayloadType: CallPayloadType) => {
   if (socket) {
     socket.emit('cell-media', callPayloadType)
   }
 }
-// 呼叫socket
+// 视频-呼叫socket
 export const useCallMediaSocketCallback = ({ userId, onError, onCall }) => {
   const handleConnect = () => {
     //  处理呼叫信息
@@ -97,11 +98,13 @@ export const useCallMediaSocketCallback = ({ userId, onError, onCall }) => {
     disconnect
   }
 }
+// 视频-发送消息
 export const useSendMediaInfo = (mediaInfo: { roomKey: string; data: any }) => {
   if (socket) {
     socket.emit('sendMideaMessage', mediaInfo)
   }
 }
+// 视频-socket
 export const useMediaSocketCallback = ({ joinData, handleSignalingMessage }) => {
   const handleConnect = () => {
     socket.emit('joinVideoRoom', joinData)

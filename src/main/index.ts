@@ -18,7 +18,6 @@ ipc.handle('get-wins', () => {
   return JSON.stringify(Array.from(wins.entries()))
 })
 ipc.on('close', (event, val: string) => {
-  console.log(111)
   if (val === 'all') {
     for (const [key, win] of Array.from(wins.entries())) {
       if (win) {
@@ -75,7 +74,7 @@ function createWindow(): void {
   })
 
   // HMR for renderer base on electron-vite cli.
-  // Load the remote URL for development or the local html file for production.
+  // Load the Remote URL for development or the local html file for production.
   if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
     mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL'])
   } else {

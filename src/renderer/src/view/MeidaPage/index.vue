@@ -18,6 +18,7 @@ const equipmentError = ref('')
 const videoInstance = ref()
 const localVideoInstance = ref()
 const navInstance = ref()
+// 当前链接用户信息
 const currentUserInfo = computed<any>(() => {
   const cellResultInfoStr = localStorage.getItem('MEDIA_SENDER_INFO')
   const cellResultInfo = !cellResultInfoStr ? {} : JSON.parse(cellResultInfoStr)
@@ -59,11 +60,10 @@ const handleConnectionStateChange = (status: ConnectionState) => {
 }
 const linkSignalingServer = () => {
   const joinData: any = {
-    roomKey: currentUserInfo.value.roomKey
-  }
-  // 判断当前是接收者还是发送者
-  if (type.value === 'receiver') {
-    joinData.type = 'receiver'
+    roomKey: currentUserInfo.value.roomKey,
+    type: type.value,
+    linkType: 'media',
+    userId: currentUserInfo.value.userId,
   }
   // 进行websocket链接
   const { disconnect, connect } = useMediaSocketCallback({
@@ -119,6 +119,7 @@ const mediaInit = async () => {
 const handleClosed = () => {
   rtc.sendSignalingMessage({
     type: 'close',
+    userId: currentUserInfo.value.userId,
     message: '关闭视频通话'
   })
   rtc.close()

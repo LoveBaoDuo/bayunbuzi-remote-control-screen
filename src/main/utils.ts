@@ -16,13 +16,27 @@ interface WinType {
   url: string // 窗口加载的 URL
 }
 
+type PositionType = 'top' | 'bottom' | 'left' | 'right' | 'right-bottom'
+
 export interface CustomWindowOptions {
   url: string
   parent: boolean
-  autoSize?: boolean
   win: WinType
+  autoSize?: boolean
+  position?: PositionType
 }
 
+const getPositionInfo = (options: CustomWindowOptions) => {
+  const { width, height } = getScreenSize()
+
+  if (options.position === 'right-bottom') {
+    return {
+      x: width - (options.win.width || 0) - 10, // 右边距10像素
+      y: height - (options.win.height || 0) - 10 // 下边距10像素
+    }
+  }
+  return null
+}
 export const getScreenSize = () => {
   const primaryDisplay = screen.getPrimaryDisplay()
   return primaryDisplay.workAreaSize
@@ -45,7 +59,7 @@ export const createCustomWindow = async (
     }
   }
 
-  const config = { ...defaultValue, ...options.win }
+  const config: any = { ...defaultValue, ...options.win }
   if (options.parent) {
     config.parent = parent
   }
@@ -53,6 +67,11 @@ export const createCustomWindow = async (
     const { width, height } = getScreenSize()
     config.width = width * 0.6
     config.height = height * 0.6
+  }
+  const position = getPositionInfo(options)
+  if (position) {
+    config.x = position.x
+    config.y = position.y
   }
   const customWindow = new BrowserWindow(config)
   customWindow.once('ready-to-show', () => {

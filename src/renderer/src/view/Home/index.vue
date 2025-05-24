@@ -1,16 +1,10 @@
 <script setup lang="ts">
-const uniqueId = ref('')
-const getUUID = async () => {
-  // @ts-ignore
-  uniqueId.value = await window.api?.uniqueId()
-}
-
-getUUID()
+import AuthProtection from './components/AuthProtection.vue'
 </script>
 
 <template>
-  <div>
-    <div class="text-white">{{ uniqueId }}</div>
+  <div class="h-full flex items-center">
+    <AuthProtection />
   </div>
 </template>
 

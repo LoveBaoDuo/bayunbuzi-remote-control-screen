@@ -5,7 +5,6 @@ import { registerUser } from '../../../api/login'
 import { Message } from '../../../../../main/messageBox'
 import Button from '/@/components/Button/index.vue'
 import { code } from '/@/config'
-import * as events from "node:events";
 // 组件内部状态
 const state = reactive({
   // 是否显示密码
