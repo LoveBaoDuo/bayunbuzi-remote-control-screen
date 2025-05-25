@@ -3,6 +3,8 @@ import { BrowserWindow, screen } from 'electron'
 import path, { join } from 'path'
 import icon from '../../resources/icon.png?asset'
 import { is } from '@electron-toolkit/utils'
+import { logger } from './winston'
+import { mouse } from '@nut-tree/nut-js'
 
 interface WinType {
   width?: number
@@ -39,7 +41,24 @@ const getPositionInfo = (options: CustomWindowOptions) => {
 }
 export const getScreenSize = () => {
   const primaryDisplay = screen.getPrimaryDisplay()
+  console.log(primaryDisplay)
   return primaryDisplay.workAreaSize
+}
+export const getCoordinateAtio = (winId: string) => {
+  const point = screen.getCursorScreenPoint()
+  // 显示器大小
+  const viceWindow = BrowserWindow.fromId(Number(winId))
+  if (!viceWindow) return {}
+  // 应用大小
+  const { x: winx, y: winy, width, height } = viceWindow.getContentBounds()
+  // 考虑 DPI 缩放
+  const scaleFactor = screen.getDisplayNearestPoint(point).scaleFactor
+  const scaledWidth = width * scaleFactor
+  const scaledHeight = height * scaleFactor
+  return {
+    xAtio: (point.x - winx) / scaledWidth,
+    yAtio: (point.y - winy) / scaledHeight
+  }
 }
 export const createCustomWindow = async (
   options: CustomWindowOptions,
@@ -96,4 +115,51 @@ export const createCustomWindow = async (
   })
 
   return customWindow
+}
+mouse.config.mouseSpeed = 0
+const processingWindowsMouseMove = (data: any) => {
+  const { width, height } = getScreenSize() // 获取被控端屏幕分辨率（如 1920x1080）
+
+  // 计算鼠标的绝对坐标（未缩放）
+  const unscaledX = data.xAtio * width
+  const unscaledY = data.yAtio * height
+
+  // 获取当前屏幕的 DPI 缩放比例
+  const scaleFactor = screen.getDisplayNearestPoint({ x: unscaledX, y: unscaledY }).scaleFactor
+
+  // 修正坐标（除以缩放比例）
+  const scaledX = unscaledX * scaleFactor
+  const scaledY = unscaledY * scaleFactor
+
+  // 移动鼠标
+  mouse.move([{ x: scaledX, y: scaledY }])
+}
+const processingWindowsMousedown = (data: any) => {
+  processingWindowsMouseMove(data)
+  mouse.leftClick()
+}
+const processingWindowsMousedownRight = (data: any) => {
+  processingWindowsMouseMove(data)
+  mouse.rightClick()
+}
+// 处理操作windows
+export const processingWindows = (str: string) => {
+  try {
+    const data = JSON.parse(str)
+    switch (data.type) {
+      case 'mousemove':
+        processingWindowsMouseMove(data)
+        break
+      case 'mousedownLeft':
+        processingWindowsMousedown(data)
+        break
+      case 'mousedownRight':
+        processingWindowsMousedownRight(data)
+        break
+      default:
+        break
+    }
+  } catch (e) {
+    logger.error(e)
+  }
 }

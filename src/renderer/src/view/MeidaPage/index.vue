@@ -5,6 +5,7 @@ import Icon from '/@/components/Icon.vue'
 import { useUserStore } from '/@/store/user.store'
 import WebRTCConnection, { ConnectionState } from '/@/utils/WebRTCConnection'
 import { useMediaSocketCallback } from '/@/hooks/socket'
+import { localStorageKey } from '/@/config'
 
 const route = useRoute()
 const type = computed(() => {
@@ -20,9 +21,9 @@ const localVideoInstance = ref()
 const navInstance = ref()
 // 当前链接用户信息
 const currentUserInfo = computed<any>(() => {
-  const cellResultInfoStr = localStorage.getItem('MEDIA_SENDER_INFO')
+  const cellResultInfoStr = localStorage.getItem(localStorageKey.mediaSenderInfo)
   const cellResultInfo = !cellResultInfoStr ? {} : JSON.parse(cellResultInfoStr)
-  const receiverInfoStr = localStorage.getItem('MEDIA_RECEIVER_INFO')
+  const receiverInfoStr = localStorage.getItem(localStorageKey.mediaReceiverInfo)
   const receiverInfo = !receiverInfoStr ? {} : JSON.parse(receiverInfoStr)
   if (type.value === 'sender') {
     return {
@@ -63,7 +64,7 @@ const linkSignalingServer = () => {
     roomKey: currentUserInfo.value.roomKey,
     type: type.value,
     linkType: 'media',
-    userId: currentUserInfo.value.userId,
+    userId: currentUserInfo.value.userId
   }
   // 进行websocket链接
   const { disconnect, connect } = useMediaSocketCallback({
@@ -159,7 +160,7 @@ onUnmounted(() => {
         </div>
       </div>
       <div>
-        <p class="text-center mb-2" v-if="equipmentError">{{equipmentError}}</p>
+        <p class="text-center mb-2" v-if="equipmentError">{{ equipmentError }}</p>
         <div class="flex justify-center gap-5">
           <div class="flex flex-col items-center no-drag cursor-pointer">
             <div

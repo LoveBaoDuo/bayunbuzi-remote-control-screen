@@ -26,7 +26,7 @@ export const videoWindowsConfig = {
   backgroundColor: '#00000000'
 }
 export const remoteReceiverWindowsConfig = {
-  width: 300,
+  width: 350,
   height: 100,
   alwaysOnTop: true,
   resizable: false, // 禁止手动调整宽高

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import AuthProtection from './components/AuthProtection.vue'
+
 </script>
 
 <template>

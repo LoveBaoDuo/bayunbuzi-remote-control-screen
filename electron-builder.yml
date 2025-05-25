@@ -1,5 +1,5 @@
-appId: com.bayunbuzi.bayunbuzi-remote-control-screen
-productName: bayunbuzi-remote-control-screen
+appId: com.bayunbuzi.bayunbuzi-Remote
+productName: bayunbuzi-Remote
 directories:
   buildResources: build
 files:
@@ -12,7 +12,7 @@ files:
 asarUnpack:
   - resources/**
 win:
-  executableName: bayunbuzi-remote-control-screen
+  executableName: bayunbuzi-Remote
   icon: build/favicon.ico
 nsis:
   artifactName: ${name}-${version}-setup.${ext}
@@ -46,7 +46,7 @@ npmRebuild: false
 publish:
   provider: github
   owner: LoveBaoDuo
-  repo: bayunbuzi-remote-control-screen
+  repo: bayunbuzi-Remote
   releaseType: 'release'
 electronDownload:
   mirror: https://npmmirror.com/mirrors/electron/

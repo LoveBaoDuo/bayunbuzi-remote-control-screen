@@ -38,7 +38,7 @@ export const createCustomWindow = (options: CustomWindowOptions): BrowserWindow 
     webPreferences: {
       preload,
       contextIsolation: true,
-      nodeIntegration: false
+      nodeIntegration: false,
     }
   })
 

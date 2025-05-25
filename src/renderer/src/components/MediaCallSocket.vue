@@ -2,6 +2,7 @@
 import { useCallMediaSocketCallback } from '/@/hooks/socket'
 import { useUserStore } from '/@/store/user.store'
 import { existWind, toVdieo, toRemote } from '/@/utils'
+import {localStorageKey} from "/@/config";
 
 const userData = useUserStore()
 const handleOnError = (val: any) => {
@@ -9,7 +10,6 @@ const handleOnError = (val: any) => {
 }
 let videoWinId = ''
 const openScanner = (data: any) => {
-  console.log(data)
   if (data?.classType === 'remote') {
     return toRemote({ type: data.type })
   } else {
@@ -21,7 +21,7 @@ const handleOnCall = async (data: {
   type: 'sender' | 'receiver'
   classType: string
 }) => {
-  localStorage.setItem('MEDIA_SENDER_INFO', JSON.stringify(data))
+  localStorage.setItem(localStorageKey.mediaSenderInfo, JSON.stringify(data))
   const flag = await existWind(videoWinId)
   if (flag) return
   if (data.type === 'receiver') {

@@ -9,6 +9,7 @@ import {
   remoteSenderWindowsConfig,
   videoWindowsConfig
 } from '../config/windows.config'
+import { localStorageKey } from '/@/config'
 
 const emitter = new IpcEmitter()
 
@@ -160,7 +161,7 @@ export function groupUsersByFirstLetter(users: any[]) {
   return { groupOrder, groups }
 }
 
-export const getDeviceUUID = async () => {
+export const getDeviceHostName = async () => {
   return await emitter.invoke('device_uuid')
 }
 export const toVdieo = async ({ type }: any) => {
@@ -183,5 +184,7 @@ export const toRemote = async ({ type }: any) => {
   }
 
   const configStr = JSON.stringify(config)
-  return await emitter.invoke('open-custom-window', configStr)
+  const winId = await emitter.invoke('open-custom-window', configStr)
+  localStorage.setItem(localStorageKey.remoteWinId, winId)
+  return winId
 }

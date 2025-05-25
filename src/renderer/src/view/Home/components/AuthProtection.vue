@@ -11,7 +11,7 @@ import { useUserStore } from '/@/store/user.store'
 
 const useUser = useUserStore()
 const useRemote = useRemoteStore()
-const { remoteInfo } = storeToRefs(useRemote)
+const { remoteInfo, loading } = storeToRefs(useRemote)
 const formattedString = computed(() => {
   return remoteInfo.value.connectionCode?.replace(/(\d{3})(?=\d)/g, '$1  ') || '000 000'
 })
@@ -51,7 +51,7 @@ const linkRemote = async () => {
       senderInfo: useUser.userInfo,
       media: 'video',
       type: 'sender',
-      classType: 'remote'
+      classType: 'remote',
     })
   } catch (e) {
     useMessage().error('链接失败')
@@ -63,10 +63,11 @@ onActivated(() => {
 </script>
 
 <template>
-  <div class="w-[90%] mx-auto p-6 bg-white rounded-lg">
+  <div v-loading="loading" class="w-[90%] mx-auto p-6 bg-white rounded-lg">
     <!-- 标题 -->
-    <div class="flex items-center mb-10">
+    <div class="flex flex-col mb-10">
       <h1 class="text-4xl font-semibold text-gray-800">此设备</h1>
+      <h4 class="mt-4 font-semibold">{{remoteInfo.devices}}</h4>
     </div>
 
     <div class="flex items-center gap-6">

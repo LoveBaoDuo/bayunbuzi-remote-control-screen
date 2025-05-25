@@ -5,7 +5,7 @@ import { useChatStore } from '/@/store/chat.store'
 import { ContactChildrenType } from '/@/view/Friends/friends'
 import { useStartCallMedia } from '/@/hooks/socket'
 import { useUserStore } from '/@/store/user.store'
-
+import {localStorageKey} from "/@/config";
 const props = defineProps<{
   data: ContactChildrenType
 }>()
@@ -22,7 +22,7 @@ const startChat = async () => {
 const openVideo = async () => {
   const sendUserId = useUser.getUserId
   const receiverId = sendUserId === props.data.userId ? props.data.friendId : props.data.userId
-  localStorage.setItem('MEDIA_RECEIVER_INFO', JSON.stringify(props.data))
+  localStorage.setItem(localStorageKey.mediaReceiverInfo, JSON.stringify(props.data))
   useStartCallMedia({
     type: 'sender',
     media: 'video',

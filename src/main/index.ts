@@ -61,13 +61,24 @@ function createWindow(): void {
     icon,
     webPreferences: {
       preload: join(__dirname, '../preload/index.mjs'),
-      sandbox: false
+      sandbox: false,
     }
   })
   updater()
   mainWindow.on('ready-to-show', () => {
     mainWindow.show()
   })
+  // 设置权限
+  mainWindow.webContents.session.setPermissionRequestHandler(
+    (_, permission, callback) => {
+      const allowedPermissions = ['display-capture', 'media']
+      if (allowedPermissions.includes(permission)) {
+        callback(true) // 允许权限
+      } else {
+        callback(false)
+      }
+    }
+  )
   mainWindow.webContents.setWindowOpenHandler((details) => {
     shell.openExternal(details.url)
     return { action: 'deny' }

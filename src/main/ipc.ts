@@ -1,7 +1,9 @@
 import { IpcListener, IpcEmitter } from '@electron-toolkit/typed-ipc/main'
 import ElectronStore from 'electron-store'
+import { desktopCapturer } from 'electron'
 import { logger } from './winston'
-import { getDeviceUUID } from './deviceInfo'
+import { getDeviceHostName } from './deviceInfo'
+import { getCoordinateAtio, processingWindows } from './utils'
 
 const store = new ElectronStore()
 export const ipc = new IpcListener()
@@ -18,7 +20,7 @@ ipc.handle('store_get', (_, key) => {
   return store.get(key)
 })
 ipc.handle('device_uuid', async () => {
-  return await getDeviceUUID()
+  return await getDeviceHostName()
 })
 // 删除应用数据
 ipc.on('store_del', (_, key) => {
@@ -35,4 +37,20 @@ ipc.on('error', (_, data) => {
 
 ipc.on('log', (_, data) => {
   logger.log(data)
+})
+ipc.handle('get_screen_sources', async () => {
+  const sources = await desktopCapturer.getSources({
+    types: ['screen', 'window']
+  })
+  return sources.map((source) => ({
+    id: source.id,
+    name: source.name,
+    thumbnail: source.thumbnail.toDataURL()
+  }))
+})
+ipc.handle('coordinate_atio', (_, winId) => {
+  return getCoordinateAtio(winId)
+})
+ipc.on('set_window_event', (_, data) => {
+  processingWindows(data)
 })

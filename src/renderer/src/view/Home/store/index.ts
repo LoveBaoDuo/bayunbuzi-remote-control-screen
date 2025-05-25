@@ -1,7 +1,8 @@
 import { defineStore } from 'pinia'
 import { getRemoteInfo } from '/@/api/home'
 import { userUserInfo } from '/@/hooks'
-import { getDeviceUUID } from '/@/utils'
+import { getDeviceHostName } from '/@/utils'
+import { localStorageKey } from '/@/config'
 
 export interface RemoteInfoType {
   devices?: string
@@ -13,25 +14,36 @@ export interface RemoteInfoType {
 
 export interface RemoteStateType {
   remoteInfo: RemoteInfoType
+  loading: boolean
 }
 
 export const useRemoteStore = defineStore('RemoteStore', {
   state: (): RemoteStateType => ({
-    remoteInfo: {}
+    remoteInfo: {},
+    loading: false
   }),
   getters: {},
   actions: {
     async getRemoteInfo() {
       try {
+        const remoteInfo = localStorage.getItem(localStorageKey.remoteInfo)
+        if (!!remoteInfo) {
+          this.remoteInfo = JSON.parse(remoteInfo)
+          return
+        }
+        this.loading = true
         const { userId } = await userUserInfo()
-        const deviceInfo = await getDeviceUUID()
+        const hostname = await getDeviceHostName()
         const res = await getRemoteInfo({
           userId,
-          devices: deviceInfo.os
+          devices: hostname
         })
         this.remoteInfo = res.data
+        localStorage.setItem(localStorageKey.remoteInfo, JSON.stringify(res.data))
       } catch (e) {
         console.error(e)
+      } finally {
+        this.loading = false
       }
     }
   }

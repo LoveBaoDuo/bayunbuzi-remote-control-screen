@@ -53,13 +53,15 @@ export interface WebRTCOptionType {
 class WebRTCConnection {
   //  WebRTC 连接实例
   private peerConnection: RTCPeerConnection | null = null
-  private readonly options: any
+  protected readonly options: any
   // 远程流
   private remoteStream: MediaStream | null = null
   // 本地流
-  private localStream: MediaStream | null = null
+  protected localStream: MediaStream | null = null
   // 数据传输渠道
-  private dataChannel: RTCDataChannel | null = null
+  protected dataChannel: RTCDataChannel | null = null
+  // 是否是发起者
+  private isInitiator: boolean = false
 
   constructor(options?: WebRTCOptionType) {
     if (options === null) {
@@ -71,6 +73,7 @@ class WebRTCConnection {
 
   // 初始化 PeerConnection
   async init(initiator = false) {
+    this.isInitiator = initiator
     this.peerConnection = new RTCPeerConnection({
       iceServers: this.options.iceServers
     })
@@ -86,7 +89,6 @@ class WebRTCConnection {
     // 监听远程流
     this.peerConnection.ontrack = (event) => {
       this.remoteStream = event.streams[0]
-      console.log(event)
       this.options.onRemoteStream(this.remoteStream)
     }
 
@@ -128,7 +130,6 @@ class WebRTCConnection {
       video: hasVideo
     }
     this.localStream = await navigator.mediaDevices.getUserMedia(constraints)
-    console.log(this.localStream)
     // 添加本地流
     this.options.onLocalStream(this.localStream)
     return this.localStream
@@ -160,6 +161,7 @@ class WebRTCConnection {
 
   // 处理 Offer（接收方调用）
   async handleOffer(offer) {
+    if (this.isInitiator) return
     await this.addLocalStream()
     await this.peerConnection?.setRemoteDescription(offer)
     const answer = await this.peerConnection?.createAnswer()
