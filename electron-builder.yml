@@ -46,7 +46,7 @@ npmRebuild: false
 publish:
   provider: github
   owner: LoveBaoDuo
-  repo: bayunbuzi-Remote
+  repo: bayunbuzi-Remote-control-screen
   releaseType: 'release'
 electronDownload:
   mirror: https://npmmirror.com/mirrors/electron/
