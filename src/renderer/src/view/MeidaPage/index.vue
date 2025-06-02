@@ -57,6 +57,7 @@ const handleLocalStream = (stram: MediaStream) => {
 }
 // 处理链接状态
 const handleConnectionStateChange = (status: ConnectionState) => {
+  console.log('connectionState.value', status)
   connectionState.value = status
 }
 const linkSignalingServer = () => {

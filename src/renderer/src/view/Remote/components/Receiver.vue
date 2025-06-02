@@ -2,7 +2,7 @@
 import { IpcEmitter } from '@electron-toolkit/typed-ipc/renderer'
 import { useMediaSocketCallback } from '/@/hooks/socket'
 import WebRtCConnectionRemote from '/@/utils/WebRtCConnectionRemote'
-import {localStorageKey} from "/@/config";
+import { localStorageKey } from '/@/config'
 
 const emitter = new IpcEmitter()
 // 当前链接信息
@@ -11,7 +11,9 @@ const currentLinkInfo = computed<any>(() => {
   return !cellResultInfoStr ? {} : JSON.parse(cellResultInfoStr)
 })
 const formattedString = computed(() => {
-  return currentLinkInfo.value.linkInfo.connectionCode.value.connectionCode?.replace(/(\d{3})(?=\d)/g, '$1  ') || '000 000'
+  return (
+    currentLinkInfo.value.linkInfo.connectionCode?.replace(/(\d{3})(?=\d)/g, '$1  ') || '000 000'
+  )
 })
 let disconnectFun: any
 let rtc: WebRtCConnectionRemote
@@ -33,6 +35,12 @@ const linkSignalingServer = () => {
       try {
         if (['receiver'].includes(payload.type)) {
           await rtc.init(false)
+          const joinData: any = {
+            type: 'link',
+            linkType: 'remote',
+          }
+          rtc.sendSignalingMessage(joinData)
+          return
         }
         // 使用webrtc实例处理通信消息
         rtc.handleSignalingMessage(payload)

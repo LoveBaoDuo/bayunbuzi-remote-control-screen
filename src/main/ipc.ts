@@ -3,7 +3,7 @@ import ElectronStore from 'electron-store'
 import { desktopCapturer } from 'electron'
 import { logger } from './winston'
 import { getDeviceHostName } from './deviceInfo'
-import { getCoordinateAtio, processingWindows } from './utils'
+import { getCoordinateAtio, processingWindows } from './remote/remote'
 
 const store = new ElectronStore()
 export const ipc = new IpcListener()
@@ -48,8 +48,8 @@ ipc.handle('get_screen_sources', async () => {
     thumbnail: source.thumbnail.toDataURL()
   }))
 })
-ipc.handle('coordinate_atio', (_, winId) => {
-  return getCoordinateAtio(winId)
+ipc.handle('coordinate_atio', (_, options) => {
+  return getCoordinateAtio(options)
 })
 ipc.on('set_window_event', (_, data) => {
   processingWindows(data)

@@ -28,7 +28,6 @@ class WebRtCConnectionRemote extends WebRTCConnection {
     }
     // 3.获取屏幕流
     this.localStream = await navigator.mediaDevices.getUserMedia(constraints as any)
-    console.log(this.localStream)
     // 添加本地流
     this.options.onLocalStream(this.localStream)
     return this.localStream

@@ -36,7 +36,7 @@ const linkRemote = async () => {
     customClass: 'no-drag',
     cancelButtonClass: 'no-drag',
     confirmButtonClass: 'no-drag',
-    inputErrorMessage: '请输入申请理由'
+    inputErrorMessage: '请输入远程密码'
   })
   try {
     const res = await remoteLink({
@@ -51,7 +51,7 @@ const linkRemote = async () => {
       senderInfo: useUser.userInfo,
       media: 'video',
       type: 'sender',
-      classType: 'remote',
+      classType: 'remote'
     })
   } catch (e) {
     useMessage().error('链接失败')
@@ -67,7 +67,7 @@ onActivated(() => {
     <!-- 标题 -->
     <div class="flex flex-col mb-10">
       <h1 class="text-4xl font-semibold text-gray-800">此设备</h1>
-      <h4 class="mt-4 font-semibold">{{remoteInfo.devices}}</h4>
+      <h4 class="mt-4 font-semibold">{{ remoteInfo.devices }}</h4>
     </div>
 
     <div class="flex items-center gap-6">
@@ -96,34 +96,14 @@ onActivated(() => {
           <div
             class="flex items-center text-2xl p-3 bg-gray-100 rounded-md text-center font-mono text-gray-800"
           >
-            <template v-if="isEye">
-              <span class="mr-2 no-drag">{{ remoteInfo.linkPassword }}</span>
-            </template>
-            <template v-else>
-              <span class="mr-2 box-border" style="vertical-aligh: sub">******</span>
-            </template>
+            <span class="mr-2 no-drag">{{ remoteInfo.linkPassword }}</span>
           </div>
           <div>
-            <template v-if="isEye">
-              <Icon
-                class="mr-2 cursor-pointer haver:text-blur"
-                name="copy"
-                :size="20"
-                @click="handleCopy(remoteInfo.linkPassword)"
-              />
-              <Icon
-                class="mr-2 cursor-pointer haver:text-blur"
-                name="eye-off"
-                :size="20"
-                @click="isEye = !isEye"
-              />
-            </template>
             <Icon
-              v-else
               class="mr-2 cursor-pointer haver:text-blur"
-              name="eye"
+              name="copy"
               :size="20"
-              @click="isEye = !isEye"
+              @click="handleCopy(remoteInfo.linkPassword)"
             />
           </div>
         </div>

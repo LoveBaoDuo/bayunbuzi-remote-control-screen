@@ -11,7 +11,6 @@ export const useMediaStore = defineStore('MediaStore', {
   },
   actions: {
     setInit(data: any) {
-      console.log(data)
       this.roomKey = data.roomKey
       this.senderInfo = data.senderInfo
     }

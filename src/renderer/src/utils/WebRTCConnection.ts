@@ -73,6 +73,7 @@ class WebRTCConnection {
 
   // 初始化 PeerConnection
   async init(initiator = false) {
+    if (this.peerConnection) return
     this.isInitiator = initiator
     this.peerConnection = new RTCPeerConnection({
       iceServers: this.options.iceServers
@@ -156,6 +157,10 @@ class WebRTCConnection {
 
   // 处理 Answer（接收方调用）媒体协商
   async handleAnswer(answer) {
+    if (!answer) {
+      console.log('answer 不能为空！')
+      return
+    }
     await this.peerConnection?.setRemoteDescription(answer)
   }
 
